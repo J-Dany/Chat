@@ -46,7 +46,7 @@ public class LogMessage
     public String toString()
     {
         return 
-        "[ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuu-L-d H:m:s")) + " ]" + 
+        "[ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("u-L-d H:m:s")) + " ]" + 
         " [ " + this.type + " ] - " + 
         this.threadName + " - " + msg;
     }

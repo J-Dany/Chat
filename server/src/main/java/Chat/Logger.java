@@ -42,7 +42,7 @@ public class Logger extends Thread
      * - ER => stands for "error", represents a messagge error
      * - IN => stands for "info", represents a info messagge
      */
-    enum LoggerType
+    public enum LoggerType
     {
         OK,
         ER,
