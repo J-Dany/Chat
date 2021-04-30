@@ -8,13 +8,14 @@ import java.util.concurrent.Executors;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.Logger.LoggerType;
+import Chat.console.Console;
 
 /**
  * The message server. Here were all the message
  * and connection will be processed
  * 
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Server extends Thread
 {
@@ -34,6 +35,11 @@ public class Server extends Thread
      * write and read messages
      */
     private ServerSocket socket;
+
+    /**
+     * Server console
+     */
+    private Console console;
 
     /**
      * The reference to the Main
@@ -57,6 +63,7 @@ public class Server extends Thread
     {
         this.socket = new ServerSocket(port);
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
+        this.console = new Console();
     }
 
     /**
@@ -70,11 +77,17 @@ public class Server extends Thread
     {
         this.socket = new ServerSocket(this.PORT);
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
+        this.console = new Console();
     }
 
     @Override
     public void run()
     {
+        ////////////////////////////////////
+        // Faccio partire la console      //
+        ////////////////////////////////////
+        this.console.start();
+
         ////////////////////////////////////
         // Finché il thread non viene     //
         // interrotto...                  //
@@ -121,8 +134,11 @@ public class Server extends Thread
     /**
      * Release the resource
      */
-    public void close()
+    public void close() throws IOException
     {
-
+        this.threadPool.shutdown();
+        this.socket.close();
+        this.console.interrupt();
+        this.console.join();
     }
 }
