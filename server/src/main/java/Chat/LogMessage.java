@@ -43,7 +43,8 @@ public class LogMessage
     }
 
     /**
-     * Write into the logger an info message
+     * Returns an info LogMessage instance, representing
+     * a message that will be written into the log
      * 
      * @param msg the message to write
      * @return an instance of LogMessage
@@ -54,7 +55,8 @@ public class LogMessage
     }
 
     /**
-     * Write into the logger an error message
+     * Returns an error LogMessage instance, representing
+     * a message that will be written into the log
      * 
      * @param msg the message to write
      * @return an instance of LogMessage
@@ -65,7 +67,8 @@ public class LogMessage
     }
 
     /**
-     * Write into the logger an ok message
+     * Returns an ok LogMessage instance, representing
+     * a message that will be written into the log
      * 
      * @param msg the message to write
      * @return an instance of LogMessage
