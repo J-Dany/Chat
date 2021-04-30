@@ -134,7 +134,7 @@ public class Server extends Thread
     /**
      * Release the resource
      */
-    public void close() throws IOException
+    public void close() throws IOException, InterruptedException
     {
         this.threadPool.shutdown();
         this.socket.close();

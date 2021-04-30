@@ -28,8 +28,8 @@ dependencies {
 
 java {
     toolchain {
-        sourceCompatibility = "VERSION_15"
-        targetCompatibility = "VERSION_15"
+        sourceCompatibility = "VERSION_14"
+        targetCompatibility = "VERSION_14"
     }
 }
 
