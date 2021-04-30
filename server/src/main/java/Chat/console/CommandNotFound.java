@@ -1,5 +1,11 @@
 package Chat.console;
 
+/**
+ * Represents the exception "command not found"
+ * 
+ * @author Daniele Castiglia
+ * @version 1.0.0
+ */
 public class CommandNotFound extends Exception
 {
     public CommandNotFound(String command)

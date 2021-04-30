@@ -30,41 +30,42 @@ public class Console extends Thread
     public void run()
     {
         ////////////////////////////////////
-        // Inizializzo l'oggetto per      //
-        // leggere da tastiera            //
+        // Instatiating the object for    //
+        // reading from standard input    //
         ////////////////////////////////////
         Scanner input = new Scanner(System.in);
 
         while (true)
         {
             ////////////////////////////////////
-            // Leggo il comando dalla console //
+            // Read the written command       //
             ////////////////////////////////////
             String line = input.next();
 
             try
             {
                 ////////////////////////////////////
-                // Splitto tutti gli argomenti    //
-                // e li metto dentro l'array      //
+                // Splits the string into an      //
+                // array. From this array I can   //
+                // obtain command name and its    //
+                // arguments                      //
                 ////////////////////////////////////
                 String arguments[] = line.split(" ");
 
                 ////////////////////////////////////
-                // Dagli argomenti prendo il      //
-                // comando richiesto              //
+                // Take command name              //
                 ////////////////////////////////////
                 String command = arguments[0];
 
                 ////////////////////////////////////
-                // Inizializzo l'arraylist degli  //
-                // argomenti passati al comando   //
+                // Instatiating the arguments     //
+                // list                           //
                 ////////////////////////////////////
                 ArrayList<String> args = new ArrayList<>();
 
                 ////////////////////////////////////
-                // Riempio l'arraylist con i      //
-                // parametri                      //
+                // Filling the arraylist with     //
+                // the written params             //
                 ////////////////////////////////////
                 for (int i = 1; i < arguments.length; ++i)
                 {
@@ -72,8 +73,8 @@ public class Console extends Thread
                 }
 
                 ////////////////////////////////////
-                // Chiama il comando richiesto e  //
-                // gli passa i parametri          //
+                // Calls the command handler      //
+                // and pass to it its args        //
                 ////////////////////////////////////
                 Handler handler = this.handlers.get(command);
                 
@@ -85,10 +86,9 @@ public class Console extends Thread
                 handler.handle(args);
             }
             ////////////////////////////////////
-            // Questa eccezione indica che    //
-            // un comando vuole chiudere      //
-            // normalmente, senza errori, la  //
-            // console                        //
+            // This exception means "Ok, I    //
+            // want to close the console, I   //
+            // am closing the server"         //
             ////////////////////////////////////
             catch (CloseConsoleException e)
             {
@@ -96,10 +96,7 @@ public class Console extends Thread
                 break;
             }
             ////////////////////////////////////
-            // Questa invece rappresenta      //
-            // l'eccezione nella quale un     //
-            // comando dato comporta la       //
-            // chiusura della console         //
+            // Represents a console crash     //
             ////////////////////////////////////
             catch (UnexpectedClosedConsole e)
             {
@@ -107,17 +104,16 @@ public class Console extends Thread
                 break;
             }
             ////////////////////////////////////
-            // Questa eccezione rappresenta   //
-            // il caso in cui il comando      //
-            // digitato non esiste            //
+            // This exception is thrown when  //
+            // a written command does not     //
+            // exists                         //
             ////////////////////////////////////
             catch (CommandNotFound e)
             {
 
             }
             ////////////////////////////////////
-            // Rappresenta una qualsiasi      //
-            // altra eccezione                //
+            // Any other exception            //
             ////////////////////////////////////
             catch (Exception e)
             {

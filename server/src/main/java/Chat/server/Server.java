@@ -9,13 +9,14 @@ import Chat.LogMessage;
 import Chat.Logger;
 import Chat.Logger.LoggerType;
 import Chat.console.Console;
+import io.github.cdimascio.dotenv.*;
 
 /**
  * The message server. Here were all the message
  * and connection will be processed
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class Server extends Thread
 {
@@ -28,7 +29,7 @@ public class Server extends Thread
     /**
      * The size of the thread pool
      */
-    private final int THREAD_POOL_SIZE = 32;
+    private final int THREAD_POOL_SIZE = Integer.parseInt(Dotenv.load().get("MAX_USERS"));
 
     /**
      * Socket used by the server to
@@ -84,29 +85,28 @@ public class Server extends Thread
     public void run()
     {
         ////////////////////////////////////
-        // Faccio partire la console      //
+        // Starts the console             //
         ////////////////////////////////////
         this.console.start();
 
         ////////////////////////////////////
-        // Finché il thread non viene     //
-        // interrotto...                  //
+        // While this thread is not       //
+        // interrupted...                 //
         ////////////////////////////////////
         while(!Thread.interrupted())
         {
             try
             {
                 ////////////////////////////////////
-                // Accetta la connessione in      //
-                // entrata                        //
+                // Accepts connections            //
                 ////////////////////////////////////
                 Socket s = this.socket.accept();
             }
             catch (Exception e)
             {
                 ////////////////////////////////////
-                // Se il logger non è settato,    //
-                // scrivi nello standard output   //
+                // If logger is not set, print    //
+                // in standard output             //
                 ////////////////////////////////////
                 if (this.logger != null)
                 {

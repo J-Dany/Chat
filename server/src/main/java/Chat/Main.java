@@ -14,14 +14,13 @@ public class Main
     public static void main(String[] args) 
     {
         ////////////////////////////////////
-        // Setto il nome al thread        //
-        // corrente per identificarlo     //
+        // Sets the name of the current   //
+        // thread to identify it          //
         ////////////////////////////////////
         Thread.currentThread().setName("Main");
         
         ////////////////////////////////////
-        // Carico il file .env con le     //
-        // variabili d'ambiente           //
+        // Load .env file                 //
         ////////////////////////////////////
         Dotenv dotenv = Dotenv.load();
 
@@ -30,23 +29,24 @@ public class Main
         try
         {
             ////////////////////////////////////
-            // Istanzio il logger e lo faccio //
-            // partire                        //
+            // Create an instance of Logger   //
+            // and starts the thread          //
             ////////////////////////////////////
             logger = new Logger(dotenv.get("LOG_FILE_PATH"));
             logger.start();
 
             ////////////////////////////////////
-            // Istanzio il server, lo faccio  //
-            // partire e gli passo il logger  //
+            // instantiation of server,       //
+            // setting the logger for the     //
+            // server and starts it           //
             ////////////////////////////////////
             Server server = new Server(60000);
             server.setLogger(logger);
             server.start();
 
             ////////////////////////////////////
-            // Aspetto che il server termini  //
-            // la sua esecuzione              //
+            // Wait for the server finishing  //
+            // his work                       //
             ////////////////////////////////////
             server.join();
         }
