@@ -18,12 +18,13 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13'
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+    compile 'com.google.guava:guava:29.0-jre'
+    compile 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 java {
@@ -36,4 +37,14 @@ java {
 application {
     // Define the main class for the application.
     mainClass = 'Chat.Main'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "Chat.Main"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

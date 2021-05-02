@@ -3,12 +3,17 @@ package Chat.console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Stack;
+
+import Chat.LogMessage;
+import Chat.Logger;
+import Chat.server.Server;
 
 /**
  * Represents the server console
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.3.1
  */
 public class Console extends Thread
 {
@@ -16,14 +21,34 @@ public class Console extends Thread
      * The HashMap containing handler
      * for each command available
      */
-    HashMap<String, Handler> handlers;
+    private HashMap<String, Handler> handlers;
+
+    /**
+     * A reference to the server
+     */
+    private Server server;
+
+    /**
+     * A reference to the server logger
+     */
+    private Logger logger;
+
+    /**
+     * Console history
+     */
+    private Stack<String> history;
 
     /**
      * Constructor
      */
-    public Console()
+    public Console(Server server, Logger logger)
     {
+        this.setName("Console");
+        this.history = new Stack<>();
+        this.handlers = new HashMap<>();
         this.setHanderls();
+        this.server = server;
+        this.logger = logger;
     }
 
     @Override
@@ -40,7 +65,11 @@ public class Console extends Thread
             ////////////////////////////////////
             // Read the written command       //
             ////////////////////////////////////
-            String line = input.next();
+            System.out.print("? ");
+            String line = input.nextLine();
+
+            this.logger.addMsg(LogMessage.info("Command: " + line));
+            this.history.push(line);
 
             try
             {
@@ -92,6 +121,14 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (CloseConsoleException e)
             {
+                try
+                {
+                    this.server.close();
+                }
+                catch (Exception ex)
+                {
+                    this.logger.addMsg(LogMessage.error(ex.getMessage()));
+                }
 
                 break;
             }
@@ -110,14 +147,15 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (CommandNotFound e)
             {
-
+                System.err.println(e.getMessage());
+                this.logger.addMsg(LogMessage.error(e.getMessage()));
             }
             ////////////////////////////////////
             // Any other exception            //
             ////////////////////////////////////
             catch (Exception e)
             {
-
+                this.logger.addMsg(LogMessage.error(e.getMessage()));
             }
         }
 
@@ -130,6 +168,37 @@ public class Console extends Thread
      */
     private void setHanderls()
     {
+        this.handlers.put("exit", new Handler()
+        {
+            @Override
+            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
+            {
+                throw new CloseConsoleException();                
+            }
+        });
 
+        this.handlers.put("history", new Handler()
+        {
+            @Override
+            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole
+            {
+                if (args.isEmpty())
+                {
+                    for (String command : history)
+                    {
+                        System.out.println(command);
+                    }
+                }
+                else
+                {
+                    int to = Integer.parseInt(args.get(0));
+
+                    for (int i = 0; i < to; ++i)
+                    {
+                        System.out.println(history.get(i));
+                    }
+                }
+            }
+        });
     }
 }

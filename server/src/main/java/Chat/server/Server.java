@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import Chat.LogMessage;
 import Chat.Logger;
-import Chat.Logger.LoggerType;
 import Chat.console.Console;
 import io.github.cdimascio.dotenv.*;
 
@@ -62,9 +61,9 @@ public class Server extends Thread
      */
     public Server(int port) throws IOException
     {
+        this.setName("Server");
         this.socket = new ServerSocket(port);
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
-        this.console = new Console();
     }
 
     /**
@@ -76,14 +75,16 @@ public class Server extends Thread
      */
     public Server() throws IOException
     {
+        this.setName("Server");
         this.socket = new ServerSocket(this.PORT);
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
-        this.console = new Console();
     }
 
     @Override
     public void run()
     {
+        this.console = new Console(this, this.logger);
+
         ////////////////////////////////////
         // Starts the console             //
         ////////////////////////////////////
@@ -110,7 +111,7 @@ public class Server extends Thread
                 ////////////////////////////////////
                 if (this.logger != null)
                 {
-                    this.logger.addMsg(new LogMessage(LoggerType.ER, e.getMessage()));
+                    this.logger.addMsg(LogMessage.error(e.getMessage()));
                 }
                 else
                 {
@@ -136,8 +137,10 @@ public class Server extends Thread
      */
     public void close() throws IOException, InterruptedException
     {
+        this.logger.addMsg(LogMessage.info("Closing the server"));
         this.threadPool.shutdown();
         this.socket.close();
+        this.interrupt();
         this.console.interrupt();
         this.console.join();
     }

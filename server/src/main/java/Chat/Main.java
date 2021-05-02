@@ -28,6 +28,7 @@ public class Main
 
         try
         {
+            System.out.println("Starting the logger...");
             ////////////////////////////////////
             // Create an instance of Logger   //
             // and starts the thread          //
@@ -35,6 +36,8 @@ public class Main
             logger = new Logger(dotenv.get("LOG_FILE_PATH"));
             logger.start();
 
+            System.out.println("Starting the server...");
+            logger.addMsg(LogMessage.info("Starting the server..."));
             ////////////////////////////////////
             // instantiation of server,       //
             // setting the logger for the     //
@@ -44,11 +47,15 @@ public class Main
             server.setLogger(logger);
             server.start();
 
+            logger.addMsg(LogMessage.ok("Server started"));
+
             ////////////////////////////////////
             // Wait for the server finishing  //
             // his work                       //
             ////////////////////////////////////
             server.join();
+
+            logger.addMsg(LogMessage.ok("Server closed"));
         }
         catch (Exception e)
         {
