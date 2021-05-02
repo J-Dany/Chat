@@ -168,14 +168,18 @@ public class Console extends Thread
      */
     private void setHanderls()
     {
-        this.handlers.put("exit", new Handler()
+        Handler closeHandler = new Handler()
         {
             @Override
             public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
             {
                 throw new CloseConsoleException();                
             }
-        });
+        };
+
+        this.handlers.put("exit", closeHandler);
+        this.handlers.put("close", closeHandler);
+        this.handlers.put("stop", closeHandler);
 
         this.handlers.put("history", new Handler()
         {
