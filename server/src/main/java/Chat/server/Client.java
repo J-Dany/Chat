@@ -67,6 +67,16 @@ public class Client
     }
 
     /**
+     * Get the username
+     * 
+     * @return String
+     */
+    public String getUsername()
+    {
+        return this.username;
+    }
+
+    /**
      * This metod sends the message to
      * this client
      * 
@@ -77,6 +87,19 @@ public class Client
     {
         this.writer.write(msg);
         this.writer.flush();
+    }
+
+    /**
+     * Blocking method, returing the red message
+     * 
+     * @return red message
+     * @throws IOException
+     */
+    public String listenForIncomingMessage() throws IOException
+    {
+        byte[] buffer  = new byte[1024];
+        int l = this.socket.getInputStream().read(buffer);
+        return new String(buffer, 0, l, "UTF-8");
     }
 
     /**
