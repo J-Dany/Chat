@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Class that represent a Client

@@ -39,14 +39,22 @@ public class Console extends Thread
     private Stack<String> history;
 
     /**
+     * ArrayList containing commands to be ignored
+     * when saving command in the history
+     */
+    private ArrayList<String> ignoredCommand;
+
+    /**
      * Constructor
      */
     public Console(Server server, Logger logger)
     {
         this.setName("Console");
+        this.ignoredCommand = new ArrayList<>();
         this.history = new Stack<>();
         this.handlers = new HashMap<>();
         this.setHanderls();
+        this.setIgnoredCommands();
         this.server = server;
         this.logger = logger;
     }
@@ -69,7 +77,6 @@ public class Console extends Thread
             String line = input.nextLine();
 
             this.logger.addMsg(LogMessage.info("Command: " + line));
-            this.history.push(line);
 
             try
             {
@@ -85,6 +92,16 @@ public class Console extends Thread
                 // Take command name              //
                 ////////////////////////////////////
                 String command = arguments[0];
+
+                ////////////////////////////////////
+                // There is a set of commands     //
+                // to be ignored when saving the  //
+                // command to history             //
+                ////////////////////////////////////
+                if (!this.ignoredCommand.contains(command))
+                {
+                    this.history.push(line);
+                }
 
                 ////////////////////////////////////
                 // Instatiating the arguments     //
@@ -173,7 +190,7 @@ public class Console extends Thread
             @Override
             public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
             {
-                throw new CloseConsoleException();                
+                throw new CloseConsoleException();
             }
         };
 
@@ -204,5 +221,15 @@ public class Console extends Thread
                 }
             }
         });
+    }
+
+    /**
+     * Sets the command to be ignored
+     * by console when saving command
+     * in history
+     */
+    private void setIgnoredCommands()
+    {
+        this.ignoredCommand.add("useradd");
     }
 }
