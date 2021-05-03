@@ -124,6 +124,7 @@ public class Server extends Thread
             try
             {
                 this.logger.addMsg(LogMessage.info("Listening for incoming connection"));
+                
                 ////////////////////////////////////
                 // Accepts connections            //
                 ////////////////////////////////////

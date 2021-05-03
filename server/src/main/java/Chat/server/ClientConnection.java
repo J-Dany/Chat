@@ -41,12 +41,20 @@ public class ClientConnection implements Runnable
     @Override
     public void run()
     {
+        ////////////////////////////////////
+        // Handle connection              //
+        ////////////////////////////////////
         this.manageConnection();
         
         while (true)
         {
             try
             {
+                ////////////////////////////////////
+                // Listen for incoming message    //
+                // from the client that this      //
+                // task handle                    //
+                ////////////////////////////////////
                 String msg = this.client.listenForIncomingMessage();
                 
                 logger.addMsg(LogMessage.ok("Message received from " + this.client.getUsername()));
@@ -60,6 +68,12 @@ public class ClientConnection implements Runnable
         }
     }
 
+    /**
+     * This method handle WebSocket connection (it is
+     * a special handshake using HTTP protocol)
+     * 
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_a_WebSocket_server_in_Java
+     */
     private void manageConnection()
     {
         try
@@ -67,41 +81,6 @@ public class ClientConnection implements Runnable
             String msg = this.client.listenForIncomingMessage();
 
             this.logger.addMsg(LogMessage.info("Creating the response connection"));
-
-            /*for (String line : msg.split("\n"))
-            {
-                String l[] = line.split(":");
-
-                try
-                {
-                    System.out.println("> " + l[0] + ": " + l[1]);
-                }
-                catch (Exception e) { }
-            }
-
-            Map<String, String> headers = Arrays.stream(msg.split("\n"))
-                .map(s -> s.split(":"))
-                .collect(Collectors.toMap(s -> s[0], new Function<String[],String>(){
-                    @Override
-                    public String apply(String[] arg0) {
-                        try
-                        {
-                            return arg0[1].trim();
-                        }
-                        catch (IndexOutOfBoundsException e)
-                        {
-                            return "";
-                        }
-                    }
-                }));
-
-            String key = Base64.getEncoder().encodeToString(DigestUtils.sha1Hex(headers.get("Sec-WebSocket-Key") + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8"));
-
-            String response =
-                "HTTP/1.1 101 Switching Protocols\r\n" +
-                "Connection: Upgrade\r\n" +
-                "Upgrade: websocket\r\n" +
-                "Sec-WebSocket-Accept: " + key + "\r\n\r\n";*/
 
             Matcher get = Pattern.compile("^GET").matcher(msg);
 
