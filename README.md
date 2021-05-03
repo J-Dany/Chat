@@ -1,6 +1,9 @@
 # Server Chat
 Implementation of a chat server.
 
+## Reffered client
+For now, testing are done using a simple react app.
+
 ## Dependencies
 - gradle
 - java 11 (o >11)
