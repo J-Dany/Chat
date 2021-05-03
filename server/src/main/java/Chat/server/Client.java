@@ -9,7 +9,7 @@ import java.net.Socket;
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class Client 
 {
@@ -87,6 +87,19 @@ public class Client
     {
         this.writer.write(msg);
         this.writer.flush();
+    }
+
+    /**
+     * This metod sends the message to
+     * this client
+     * 
+     * @param buffer the buffer containing the message
+     * @throws IOException
+     * @see sendMessage(String msg)
+     */
+    public void sendMessage(byte[] buffer) throws IOException
+    {
+        this.sendMessage(new String(buffer, 0, buffer.length, "UTF-8"));
     }
 
     /**

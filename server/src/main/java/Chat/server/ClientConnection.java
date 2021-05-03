@@ -1,17 +1,14 @@
 package Chat.server;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.lang.reflect.Array;
+import java.security.MessageDigest;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-
 import Chat.LogMessage;
 import Chat.Logger;
 
@@ -71,7 +68,7 @@ public class ClientConnection implements Runnable
 
             this.logger.addMsg(LogMessage.info("Creating the response connection"));
 
-            for (String line : msg.split("\n"))
+            /*for (String line : msg.split("\n"))
             {
                 String l[] = line.split(":");
 
@@ -98,17 +95,33 @@ public class ClientConnection implements Runnable
                     }
                 }));
 
-            String key = Base64.encodeBase64String(DigestUtils.sha1Hex(headers.get("Sec-WebSocket-Key") + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes());
+            String key = Base64.getEncoder().encodeToString(DigestUtils.sha1Hex(headers.get("Sec-WebSocket-Key") + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8"));
 
             String response =
                 "HTTP/1.1 101 Switching Protocols\r\n" +
-                "Upgrade: websocket\r\n" +
                 "Connection: Upgrade\r\n" +
-                "Sec-WebSocket-Accept: " + key + "\r\n\r\n";
+                "Upgrade: websocket\r\n" +
+                "Sec-WebSocket-Accept: " + key + "\r\n\r\n";*/
 
-            this.client.sendMessage(response);
+            Matcher get = Pattern.compile("^GET").matcher(msg);
 
-            this.logger.addMsg(LogMessage.ok("Response created and sent to " + this.client.getAddress()));
+            if (get.find())
+            {
+                Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(msg);
+
+                match.find();
+
+                byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n"
+                    + "Connection: Upgrade\r\n"
+                    + "Upgrade: websocket\r\n"
+                    + "Sec-WebSocket-Accept: "
+                    + Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8")))
+                    + "\r\n\r\n").getBytes("UTF-8");
+
+                this.client.sendMessage(response);
+
+                this.logger.addMsg(LogMessage.ok("Response created and sent to " + this.client.getAddress()));
+            }
         }
         catch (Exception e)
         {
