@@ -130,6 +130,8 @@ public class Server extends Thread
                 Socket s = this.socket.accept();
                 
                 this.logger.addMsg(LogMessage.ok("Connection accepted for " + s.getInetAddress()));
+
+                this.threadPool.submit(new ClientConnection(new Client(s, s.getInetAddress()), this.logger));
             }
             catch (Exception e)
             {

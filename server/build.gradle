@@ -22,9 +22,11 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    implementation 'commons-codec:commons-codec:1.15'
 
     compile 'com.google.guava:guava:29.0-jre'
     compile 'io.github.cdimascio:java-dotenv:5.2.2'
+    compile 'commons-codec:commons-codec:1.15'
 }
 
 java {
