@@ -23,10 +23,12 @@ dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     implementation 'commons-codec:commons-codec:1.15'
+    implementation 'org.eclipse.jetty.websocket:websocket-server:9.4.40.v20210413'
 
     compile 'com.google.guava:guava:29.0-jre'
     compile 'io.github.cdimascio:java-dotenv:5.2.2'
     compile 'commons-codec:commons-codec:1.15'
+    compile 'org.eclipse.jetty.websocket:websocket-server:9.4.40.v20210413'
 }
 
 java {

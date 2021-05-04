@@ -1,14 +1,10 @@
 package Chat.server;
 
 import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.util.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import Chat.LogMessage;
 import Chat.Logger;
 
@@ -59,7 +55,50 @@ public class ClientConnection implements Runnable
                 
                 logger.addMsg(LogMessage.ok("Message received from " + this.client.getUsername()));
 
-                System.out.println(msg);
+                byte[] encoded = msg.getBytes();
+
+                byte length = (byte)(encoded[1] & 0x7F); // 1 byte
+
+                System.out.println("Length: " + length);
+
+                int indexFirstDataByte;
+
+                byte[] masks = null;
+
+                switch (length)
+                {
+                    ////////////////////////////////////
+                    // The following two bytes are    //
+                    // used for the length            //
+                    ////////////////////////////////////
+                    case 127:
+                        masks = Arrays.copyOfRange(encoded, 4, 8);
+                        indexFirstDataByte = 9;
+                    break;
+                    ////////////////////////////////////
+                    // The following eight bytes are  //
+                    // used for the length            //
+                    ////////////////////////////////////
+                    case 126:
+                        masks = Arrays.copyOfRange(encoded, 9, 13);
+                        indexFirstDataByte = 14;
+                    break;
+                    ////////////////////////////////////
+                    // The actually lenth of msg      //
+                    ////////////////////////////////////
+                    default:
+                        masks = Arrays.copyOfRange(encoded, 2, 5);
+                        indexFirstDataByte = 6;
+                }
+
+                int[] decoded = new int[encoded.length - indexFirstDataByte];
+
+                for (int i = indexFirstDataByte, j = 0; i < decoded.length; ++i, ++j) {
+                    decoded[j] = (encoded[i] ^ masks[j & 0x3]);
+                    System.out.print((char)decoded[j]);
+                }
+
+                //System.out.println(msg);
             }
             catch (Exception e)
             {
