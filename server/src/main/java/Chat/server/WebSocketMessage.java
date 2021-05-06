@@ -1,7 +1,11 @@
+package Chat.server;
+
 import java.util.Arrays;
 
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
+ * @author Daniele Castiglia
+ * @version 1.0.0
  */
 public class WebSocketMessage {
     private byte[] data;

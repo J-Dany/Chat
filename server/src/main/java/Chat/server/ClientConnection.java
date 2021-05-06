@@ -10,7 +10,7 @@ import Chat.Logger;
 
 /***
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class ClientConnection implements Runnable
 {
@@ -51,54 +51,13 @@ public class ClientConnection implements Runnable
                 // from the client that this      //
                 // task handle                    //
                 ////////////////////////////////////
-                String msg = this.client.listenForIncomingMessage();
+                byte[] buffer = this.client.listenForIncomingMessage();
+
+                Message msg = new Message(new WebSocketMessage(buffer));
                 
                 logger.addMsg(LogMessage.ok("Message received from " + this.client.getUsername()));
 
-                byte[] encoded = msg.getBytes();
-
-                byte length = (byte)(encoded[1] & 0x7F); // 1 byte
-
-                System.out.println("Length: " + length);
-
-                int indexFirstDataByte;
-
-                byte[] masks = null;
-
-                switch (length)
-                {
-                    ////////////////////////////////////
-                    // The following two bytes are    //
-                    // used for the length            //
-                    ////////////////////////////////////
-                    case 127:
-                        masks = Arrays.copyOfRange(encoded, 4, 8);
-                        indexFirstDataByte = 9;
-                    break;
-                    ////////////////////////////////////
-                    // The following eight bytes are  //
-                    // used for the length            //
-                    ////////////////////////////////////
-                    case 126:
-                        masks = Arrays.copyOfRange(encoded, 9, 13);
-                        indexFirstDataByte = 14;
-                    break;
-                    ////////////////////////////////////
-                    // The actually lenth of msg      //
-                    ////////////////////////////////////
-                    default:
-                        masks = Arrays.copyOfRange(encoded, 2, 5);
-                        indexFirstDataByte = 6;
-                }
-
-                int[] decoded = new int[encoded.length - indexFirstDataByte];
-
-                for (int i = indexFirstDataByte, j = 0; i < decoded.length; ++i, ++j) {
-                    decoded[j] = (encoded[i] ^ masks[j & 0x3]);
-                    System.out.print((char)decoded[j]);
-                }
-
-                //System.out.println(msg);
+                //System.out.println(msg.getMessage());
             }
             catch (Exception e)
             {
@@ -117,7 +76,8 @@ public class ClientConnection implements Runnable
     {
         try
         {
-            String msg = this.client.listenForIncomingMessage();
+            byte[] buffer = this.client.listenForIncomingMessage();
+            String msg = new String(buffer, 0, buffer.length, "UTF-8");
 
             this.logger.addMsg(LogMessage.info("Creating the response connection"));
 

@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.2.0
+ * @version 1.2.1
  */
 public class Client 
 {
@@ -106,13 +107,14 @@ public class Client
      * Blocking method, returing the red message
      * 
      * @return red message
-     * @throws IOException
+     * @throws Exception
      */
-    public String listenForIncomingMessage() throws IOException
+    public byte[] listenForIncomingMessage() throws Exception
     {
-        byte[] buffer  = new byte[1024];
+        byte[] buffer = new byte[1024];
         int l = this.socket.getInputStream().read(buffer);
-        return new String(buffer, 0, l, "UTF-8");
+        
+        return Arrays.copyOfRange(buffer, 0, l);
     }
 
     /**

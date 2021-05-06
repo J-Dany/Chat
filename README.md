@@ -1,7 +1,7 @@
 # Server Chat
 Implementation of a chat server.
 
-The client for this server can be found [here](https://github.com/J-Dany/ChatClient.git);
+The client for this server can be found [here](https://github.com/J-Dany/ChatClient.git)
 
 ## Reffered client
 For now, testing are done using a simple react app.
