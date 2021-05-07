@@ -3,7 +3,6 @@ package Chat.server;
 import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Arrays;
 import java.util.Base64;
 import Chat.LogMessage;
 import Chat.Logger;

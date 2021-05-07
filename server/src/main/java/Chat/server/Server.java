@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.console.Console;
+import Chat.server.exceptions.ClientAlreadyConnected;
 import io.github.cdimascio.dotenv.*;
 
 /**
@@ -46,12 +47,23 @@ public class Server extends Thread
     public static final int MAX_MESSAGE_BEFORE_BAN = Integer.parseInt(Dotenv.load().get("MAX_MESSAGE_BEFORE_BAN"));
 
     /**
+     * Reference to be used by ClientConnection
+     */
+    public static Server server = null;
+
+    /**
      * An HashMap containing all banned
      * client. The string param refers to
      * username, while the client param refers
      * to the object
      */
     private HashMap<String, Client> banned;
+
+    /**
+     * An HashMap containing all client
+     * authenticated and connected
+     */
+    private HashMap<String, Client> connected;
 
     /**
      * Socket used by the server to
@@ -88,6 +100,7 @@ public class Server extends Thread
         this.socket = new ServerSocket(port);
         this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
+        this.connected = new HashMap<>();
     }
 
     /**
@@ -103,11 +116,14 @@ public class Server extends Thread
         this.socket = new ServerSocket(this.PORT);
         this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
+        this.connected = new HashMap<>();
     }
 
     @Override
     public void run()
     {
+        server = this;
+
         this.console = new Console(this, this.logger);
 
         ////////////////////////////////////
@@ -150,6 +166,24 @@ public class Server extends Thread
                 }
             }
         }
+    }
+
+    /**
+     * When a client connects and authenticated, the thread
+     * that handle that connection will call this method
+     * 
+     * @param username the username of authenticated client
+     * @param client the reference to the client created when he connected
+     * @throws ClientAlreadyConnected
+     */
+    public void addNewConnectedClient(String username, Client client) throws ClientAlreadyConnected
+    {
+        if (this.connected.containsKey(username))
+        {
+            throw new ClientAlreadyConnected(username, this.connected.get(username).getAddress().toString());
+        }
+        
+        this.connected.put(username, client);
     }
 
     /**

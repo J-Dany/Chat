@@ -5,11 +5,9 @@
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
  * User Manual available at https://docs.gradle.org/6.8/userguide/building_java_projects.html
  */
-
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
-
     id 'java'
 }
 
@@ -18,17 +16,18 @@ repositories {
 }
 
 dependencies {
-
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'org.json:json:20210307'
+    implementation 'org.hibernate:hibernate-core:5.4.31.Final'
 
     compile 'com.google.guava:guava:29.0-jre'
     compile 'io.github.cdimascio:java-dotenv:5.2.2'
     compile 'commons-codec:commons-codec:1.15'
     compile 'org.json:json:20210307'
+    compile 'org.hibernate:hibernate-core:5.4.31.Final'
 }
 
 java {
