@@ -187,6 +187,17 @@ public class Server extends Thread
     }
 
     /**
+     * Returns the list of connected clients.
+     * Method used by Console
+     * 
+     * @return the list of connected clients
+     */
+    public Client[] getConnectedClients()
+    {
+        return this.connected.values().toArray(new Client[0]);
+    }
+
+    /**
      * The logger where the server will be
      * write messages
      * 

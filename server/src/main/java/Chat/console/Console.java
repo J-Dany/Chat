@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import Chat.LogMessage;
 import Chat.Logger;
+import Chat.server.Client;
 import Chat.server.Server;
 
 /**
@@ -217,6 +218,29 @@ public class Console extends Thread
                     for (int i = 0; i < to; ++i)
                     {
                         System.out.println(history.get(i));
+                    }
+                }
+            }
+        });
+
+        this.handlers.put("connected", new Handler()
+        {
+            @Override
+            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
+            {
+                Client[] clients = server.getConnectedClients();
+
+                if (clients.length == 1)
+                {
+                    System.out.println("There is only one client connected: ");
+                    System.out.println("> " + clients[0].getUsername() + " (" + clients[0].getAddress() + ")");
+                }
+                else
+                {
+                    System.out.println("There are " + clients.length + " clients connected: ");
+                    for (Client c : clients)
+                    {
+                        System.out.println("> " + c.getUsername() + " (" + c.getAddress() + ")");
                     }
                 }
             }
