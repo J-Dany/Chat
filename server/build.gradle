@@ -21,13 +21,13 @@ dependencies {
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'org.json:json:20210307'
-    implementation 'org.hibernate:hibernate-core:5.4.31.Final'
+    implementation 'mysql:mysql-connector-java:8.0.25'
 
     compile 'com.google.guava:guava:29.0-jre'
     compile 'io.github.cdimascio:java-dotenv:5.2.2'
     compile 'commons-codec:commons-codec:1.15'
     compile 'org.json:json:20210307'
-    compile 'org.hibernate:hibernate-core:5.4.31.Final'
+    compile 'mysql:mysql-connector-java:8.0.25'
 }
 
 java {
