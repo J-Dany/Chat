@@ -4,10 +4,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.2.0
  */
 public class DatabaseTable
 {
@@ -77,7 +80,44 @@ public class DatabaseTable
             query = "SELECT * FROM `" + this.tableName + "`" +
                 "WHERE `" + this.pk + "` = '" + pk + "';";
         }
+        else if (pk instanceof LocalDate)
+        {
+            String date = ((LocalDate)pk).format(DateTimeFormatter.ofPattern("uuuu-LL-dd"));
+
+            query = "SELECT * FROM `" + this.tableName + "` " +
+                "WHERE `" + this.pk + "` = '" + date + "';";
+        }
+        else if (pk instanceof LocalTime)
+        {
+            String time = ((LocalTime)pk).format(DateTimeFormatter.ofPattern("uuuu-LL-dd"));
+
+            query = "SELECT * FROM `" + this.tableName + "` " +
+                "WHERE `" + this.pk + "` = '" + time + "';";
+        }
 
         return stmt.executeQuery(query);
+    }
+
+    /**
+     * Returns the number of rows in this table. If
+     * the value can't be retreived from the database,
+     * this metod will return -1
+     * 
+     * @return int
+     */
+    public int rows() throws SQLException
+    {
+        String query = "SELECT COUNT(*) as num_rows FROM `" + this.tableName + "`;";
+
+        Statement stmt = this.connection.createStatement();
+
+        ResultSet result = stmt.executeQuery(query);
+
+        if (result.next())
+        {
+            return result.getInt("num_rows");
+        }
+
+        return -1;
     }
 }

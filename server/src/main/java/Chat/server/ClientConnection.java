@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import java.util.Base64;
 import Chat.LogMessage;
 import Chat.Logger;
+import Chat.server.response.Request;
+import Chat.server.response.RequestFactory;
 
 /***
  * @author Daniele Castiglia
@@ -51,16 +53,39 @@ public class ClientConnection implements Runnable
                 // task handle                    //
                 ////////////////////////////////////
                 byte[] buffer = this.client.listenForIncomingMessage();
-
-                Message msg = new Message(new WebSocketMessage(buffer));
                 
-                logger.addMsg(LogMessage.ok("Message received from " + this.client.getUsername()));
+                logger.addMsg(LogMessage.ok("Message received from " + this.client.getAddress()));
 
-                //System.out.println(msg.getMessage());
+                Message msg = null;
+
+                try
+                {
+                    msg = new Message(new WebSocketMessage(buffer));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                System.out.println(msg.getRawString());
+
+                Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
+
+                switch (request.handle(msg, this.client))
+                {
+                    case LOGIN_FAILED:
+                        logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
+                        return;
+                    case LOGIN_OK:
+                        logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
+                    break;
+                }
             }
             catch (Exception e)
             {
+                e.printStackTrace();
                 logger.addMsg(LogMessage.error(e.getMessage()));
+                break;
             }
         }
     }
