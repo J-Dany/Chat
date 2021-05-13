@@ -64,7 +64,6 @@ public class WebSocketMessage
 
         for (int i = indexFirstByteOfMessage, j = 0; j < messageByte.length; ++i, ++j) 
         {
-            System.out.printf("%c", messageByte[j]);
             this.encodedMessage[i] = messageByte[j];
         }
     }

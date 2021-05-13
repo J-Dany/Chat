@@ -14,7 +14,8 @@ public class DatabaseConnection
     /**
      * Database URL, loaded from .env file
      */
-    public static final String DB_URL = Dotenv.load().get("DB_URL");
+    public static final String DB_URL = 
+    "jdbc:mysql://10.0.2.2/" + Dotenv.load().get("DB_NAME");
 
     /**
      * The connection to the database
@@ -30,9 +31,9 @@ public class DatabaseConnection
      */
     public static Connection getConnection() throws SQLException
     {
-        if (connection != null)
+        if (connection == null)
         {
-            connection = DriverManager.getConnection(DB_URL);
+            connection = DriverManager.getConnection(DB_URL, Dotenv.load().get("DB_USER"), Dotenv.load().get("DB_PASSWD"));
         }
 
         return connection;

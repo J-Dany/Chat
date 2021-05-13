@@ -64,10 +64,8 @@ public class ClientConnection implements Runnable
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    this.logger.addMsg(LogMessage.error(e.toString()));
                 }
-
-                System.out.println(msg.getRawString());
 
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
 
@@ -83,8 +81,7 @@ public class ClientConnection implements Runnable
             }
             catch (Exception e)
             {
-                e.printStackTrace();
-                logger.addMsg(LogMessage.error(e.getMessage()));
+                logger.addMsg(LogMessage.error(e.toString()));
                 break;
             }
         }
@@ -127,7 +124,7 @@ public class ClientConnection implements Runnable
         }
         catch (Exception e)
         {
-            this.logger.addMsg(LogMessage.error(e.getMessage()));
+            this.logger.addMsg(LogMessage.error(e.toString()));
         }
     }
 }

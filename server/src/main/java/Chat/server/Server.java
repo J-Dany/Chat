@@ -158,11 +158,11 @@ public class Server extends Thread
                 ////////////////////////////////////
                 if (this.logger != null)
                 {
-                    this.logger.addMsg(LogMessage.error(e.getMessage()));
+                    this.logger.addMsg(LogMessage.error(e.toString()));
                 }
                 else
                 {
-                    e.printStackTrace();
+                    this.logger.addMsg(LogMessage.error(e.toString()));
                 }
             }
         }

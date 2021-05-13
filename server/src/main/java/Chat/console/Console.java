@@ -145,7 +145,7 @@ public class Console extends Thread
                 }
                 catch (Exception ex)
                 {
-                    this.logger.addMsg(LogMessage.error(ex.getMessage()));
+                    this.logger.addMsg(LogMessage.error(ex.toString()));
                 }
 
                 break;
@@ -166,14 +166,14 @@ public class Console extends Thread
             catch (CommandNotFound e)
             {
                 System.err.println(e.getMessage());
-                this.logger.addMsg(LogMessage.error(e.getMessage()));
+                this.logger.addMsg(LogMessage.error(e.toString()));
             }
             ////////////////////////////////////
             // Any other exception            //
             ////////////////////////////////////
             catch (Exception e)
             {
-                this.logger.addMsg(LogMessage.error(e.getMessage()));
+                this.logger.addMsg(LogMessage.error(e.toString()));
             }
         }
 
