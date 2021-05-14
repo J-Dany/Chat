@@ -51,7 +51,7 @@ public class DatabaseTable
      */
     public ResultSet findAll() throws SQLException
     {
-        Statement stmt = connection.createStatement();
+        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         return stmt.executeQuery("SELECT * FROM `" + this.tableName + "`");
     }
@@ -66,7 +66,7 @@ public class DatabaseTable
      */
     public ResultSet findOneBy(Object pk) throws SQLException
     {
-        Statement stmt = this.connection.createStatement();
+        Statement stmt = this.connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         String query = "";
 
@@ -109,7 +109,7 @@ public class DatabaseTable
     {
         String query = "SELECT COUNT(*) as num_rows FROM `" + this.tableName + "`;";
 
-        Statement stmt = this.connection.createStatement();
+        Statement stmt = this.connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         ResultSet result = stmt.executeQuery(query);
 

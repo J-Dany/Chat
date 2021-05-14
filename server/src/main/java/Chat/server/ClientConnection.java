@@ -69,7 +69,9 @@ public class ClientConnection implements Runnable
 
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
 
-                switch (request.handle(msg, this.client))
+                this.logger.addMsg(LogMessage.info("Handler instancieted " + this.client.getAddress() + ": " + request.getClass().getName()));
+
+                switch (request.handle(msg, this.client, this.logger))
                 {
                     case LOGIN_FAILED:
                         logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
