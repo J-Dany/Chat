@@ -14,7 +14,7 @@ import Chat.server.Server;
  * Represents the server console
  * 
  * @author Daniele Castiglia
- * @version 1.3.1
+ * @version 1.3.2
  */
 public class Console extends Thread
 {
@@ -234,6 +234,10 @@ public class Console extends Thread
                 {
                     System.out.println("There is only one client connected: ");
                     System.out.println("> " + clients[0].getUsername() + " (" + clients[0].getAddress() + ")");
+                }
+                else if (clients.length == 0)
+                {
+                    System.out.println("There are 0 clients connected");
                 }
                 else
                 {
