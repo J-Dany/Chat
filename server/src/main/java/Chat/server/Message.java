@@ -5,7 +5,7 @@ import Chat.server.exceptions.FieldNotFound;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Message
 {
@@ -105,5 +105,21 @@ public class Message
     public String getRawString()
     {
         return this.json.toString();
+    }
+
+    /**
+     * Returns a login response message
+     * 
+     * @param status true (login ok) or false (login failed)
+     * @return String
+     */
+    public static String login(boolean status)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_LOGIN);
+        json.put("Status", status);
+
+        return json.toString();
     }
 }

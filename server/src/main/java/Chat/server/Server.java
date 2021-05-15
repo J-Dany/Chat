@@ -187,6 +187,15 @@ public class Server extends Thread
     }
 
     /**
+     * Removes a connected client
+     * @param username the username of the client disconnected
+     */
+    public void removeConnectedClient(String username)
+    {
+        this.connected.remove(username);
+    }
+
+    /**
      * Returns the list of connected clients.
      * Method used by Console
      * 

@@ -86,13 +86,20 @@ public class Client
      */
     public void sendMessage(String msg) throws IOException
     {
-        this.writer.write(msg);
+        WebSocketMessage wbm = new WebSocketMessage(msg);
+        wbm.encodeMessage();
+        
+        String s = new String(wbm.getEncodedMessage());
+
+        this.writer.write(s);
         this.writer.flush();
     }
 
     /**
      * This metod sends the message to
-     * this client
+     * this client.
+     * 
+     * USE ONLY FOR CONNECTION
      * 
      * @param buffer the buffer containing the message
      * @throws IOException
@@ -100,7 +107,8 @@ public class Client
      */
     public void sendMessage(byte[] buffer) throws IOException
     {
-        this.sendMessage(new String(buffer, 0, buffer.length, "UTF-8"));
+        this.writer.write(new String(buffer, 0, buffer.length, "UTF-8"));
+        this.writer.flush();
     }
 
     /**

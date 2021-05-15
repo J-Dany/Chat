@@ -77,6 +77,7 @@ public class ClientConnection implements Runnable
                         logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                         return;
                     case LOGIN_OK:
+                        Server.server.addNewConnectedClient(client.getUsername(), client);
                         logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                     break;
                 }
@@ -87,6 +88,8 @@ public class ClientConnection implements Runnable
                 break;
             }
         }
+
+        Server.server.removeConnectedClient(client.getUsername());
     }
 
     /**

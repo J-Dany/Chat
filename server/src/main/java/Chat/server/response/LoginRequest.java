@@ -7,6 +7,10 @@ import Chat.server.Client;
 import Chat.server.Message;
 import Chat.server.database.DatabaseTable;
 
+/**
+ * @author Daniele Castiglia
+ * @version 1.0.1
+ */
 public class LoginRequest implements Request
 {
     @Override
@@ -31,10 +35,12 @@ public class LoginRequest implements Request
             result.getString("username").equals(msg.getSender()) && result.getString("password").equals(msg.getPassword())
         )
         {
-
+            client.setUsername(msg.getSender());
+            client.sendMessage(Message.login(true));
             return RequestReturnValues.LOGIN_OK;
         }
         
+        client.sendMessage(Message.login(false));
         return RequestReturnValues.LOGIN_FAILED;
     }
     
