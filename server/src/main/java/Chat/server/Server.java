@@ -169,6 +169,25 @@ public class Server extends Thread
     }
 
     /**
+     * Send a message to every client connected
+     * 
+     * @param msg
+     */
+    public void broadcastMessage(String msg)
+    {
+        this.connected.forEach((username, client) -> {
+            try
+            {
+                client.sendMessage(msg);
+            }
+            catch (Exception e)
+            {
+                logger.addMsg(LogMessage.error(e.toString()));
+            }
+        });
+    }
+
+    /**
      * When a client connects and authenticated, the thread
      * that handle that connection will call this method
      * 

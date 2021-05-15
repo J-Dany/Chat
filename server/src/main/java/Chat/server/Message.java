@@ -20,7 +20,9 @@ public class Message
     public enum TypeOfMessage {
         FOR_GROUP,
         FOR_PRIVATE,
-        FOR_LOGIN
+        FOR_LOGIN,
+        FOR_NEW_CONNECTION,
+        FOR_DISCONNECTION
     }
 
     /**

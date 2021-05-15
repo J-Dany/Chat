@@ -82,6 +82,10 @@ public class ClientConnection implements Runnable
                     break;
                 }
             }
+            catch (IllegalArgumentException e)
+            {
+                logger.addMsg(LogMessage.error(e.toString()));
+            }
             catch (Exception e)
             {
                 logger.addMsg(LogMessage.error(e.toString()));
@@ -89,6 +93,7 @@ public class ClientConnection implements Runnable
             }
         }
 
+        this.logger.addMsg(LogMessage.info("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
         Server.server.removeConnectedClient(client.getUsername());
     }
 

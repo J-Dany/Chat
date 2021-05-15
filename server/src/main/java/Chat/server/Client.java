@@ -1,7 +1,7 @@
 package Chat.server;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.2.1
+ * @version 1.2.3
  */
 public class Client 
 {
@@ -43,7 +43,7 @@ public class Client
      * The object used to write into
      * the socket
      */
-    private OutputStreamWriter writer;
+    private OutputStream writer;
 
     /**
      * Constructor
@@ -55,7 +55,7 @@ public class Client
     {
         this.address = address;
         this.socket = s;
-        this.writer = new OutputStreamWriter(this.socket.getOutputStream());
+        this.writer = s.getOutputStream();
     }
 
     /**
@@ -88,10 +88,8 @@ public class Client
     {
         WebSocketMessage wbm = new WebSocketMessage(msg);
         wbm.encodeMessage();
-        
-        String s = new String(wbm.getEncodedMessage());
 
-        this.writer.write(s);
+        this.writer.write(wbm.getEncodedMessage());
         this.writer.flush();
     }
 
@@ -107,7 +105,7 @@ public class Client
      */
     public void sendMessage(byte[] buffer) throws IOException
     {
-        this.writer.write(new String(buffer, 0, buffer.length, "UTF-8"));
+        this.writer.write(buffer);
         this.writer.flush();
     }
 
