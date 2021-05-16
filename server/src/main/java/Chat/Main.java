@@ -1,13 +1,16 @@
 package Chat;
 
+import java.sql.SQLException;
+
 import Chat.server.Server;
+import Chat.server.database.DatabaseConnection;
 import io.github.cdimascio.dotenv.*;
 
 /**
  * Here is where the program starts
  * 
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Main
 {
@@ -29,6 +32,19 @@ public class Main
         try
         {
             ////////////////////////////////////
+            // Try to establish a connection  //
+            // to the database                //
+            ////////////////////////////////////
+            try
+            {
+                DatabaseConnection.getConnection();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("Can't establish a connection to the database!");
+            }
+
+            ////////////////////////////////////
             // Create an instance of Logger   //
             // and starts the thread          //
             ////////////////////////////////////
@@ -36,6 +52,7 @@ public class Main
             logger.start();
 
             logger.addMsg(LogMessage.info("Starting the server..."));
+
             ////////////////////////////////////
             // instantiation of server,       //
             // setting the logger for the     //

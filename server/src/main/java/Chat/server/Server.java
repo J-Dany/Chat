@@ -169,6 +169,27 @@ public class Server extends Thread
     }
 
     /**
+     * Check if a client is online
+     * @param username
+     * @return true if the client is online, false otherwise
+     */
+    public boolean isOnline(String username)
+    {
+        return this.connected.containsKey(username);
+    }
+
+    /**
+     * Get client by username
+     * 
+     * @param username the username of the client
+     * @return Client
+     */
+    public Client getClient(String username)
+    {
+        return this.connected.get(username);
+    }
+
+    /**
      * Send a message to every client connected
      * 
      * @param msg
