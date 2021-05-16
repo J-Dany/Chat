@@ -99,6 +99,21 @@ public class DatabaseTable
     }
 
     /**
+     * Find all values with the given primary key value
+     * 
+     * @param value the value of the primary key
+     * @return ResultSet
+     */
+    public ResultSet findByPk(String value) throws SQLException
+    {
+        String query = "SELECT * FROM `" + this.tableName + "` WHERE `" + this.pk + "` = '" + value + "';";
+
+        Statement stmt = this.connection.createStatement();
+
+        return stmt.executeQuery(query);
+    }
+
+    /**
      * Returns the number of rows in this table. If
      * the value can't be retreived from the database,
      * this metod will return -1

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import java.util.Base64;
 import Chat.LogMessage;
 import Chat.Logger;
+import Chat.server.exceptions.CloseConnection;
 import Chat.server.response.Request;
 import Chat.server.response.RequestFactory;
 
@@ -80,11 +81,14 @@ public class ClientConnection implements Runnable
                         Server.server.addNewConnectedClient(client.getUsername(), client);
                         logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                     break;
+                    case CLOSE_CONNECTION:
+                        throw new CloseConnection(client.getUsername());
                 }
             }
-            catch (IllegalArgumentException e)
+            catch (CloseConnection e)
             {
-                logger.addMsg(LogMessage.error(e.toString()));
+                logger.addMsg(LogMessage.info(e.toString()));
+                break;
             }
             catch (Exception e)
             {
@@ -93,7 +97,7 @@ public class ClientConnection implements Runnable
             }
         }
 
-        this.logger.addMsg(LogMessage.info("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
+        this.logger.addMsg(LogMessage.ok("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
         Server.server.removeConnectedClient(client.getUsername());
     }
 

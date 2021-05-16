@@ -199,7 +199,10 @@ public class Server extends Thread
         this.connected.forEach((username, client) -> {
             try
             {
-                client.sendMessage(msg);
+                if (isOnline(username))
+                {
+                    client.sendMessage(msg);
+                }                
             }
             catch (Exception e)
             {
@@ -263,6 +266,10 @@ public class Server extends Thread
     public void close() throws IOException, InterruptedException
     {
         this.logger.addMsg(LogMessage.info("Closing the server"));
+        for (Client c : this.connected.values())
+        {
+            c.closeConnection();
+        }
         this.threadPool.shutdown();
         this.socket.close();
         this.interrupt();

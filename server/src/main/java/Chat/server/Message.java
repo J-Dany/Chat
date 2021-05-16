@@ -22,7 +22,8 @@ public class Message
         FOR_PRIVATE,
         FOR_LOGIN,
         FOR_NEW_CONNECTION,
-        FOR_DISCONNECTION
+        FOR_DISCONNECTION,
+        FOR_CLOSE_CONNECTION
     }
 
     /**
@@ -121,6 +122,22 @@ public class Message
 
         json.put("Type", TypeOfMessage.FOR_LOGIN);
         json.put("Status", status);
+
+        return json.toString();
+    }
+
+    /**
+     * Returns a new connection response message
+     * 
+     * @param username the connected client
+     * @return String
+     */
+    public static String newConnection(String username)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_NEW_CONNECTION);
+        json.put("Username", username);
 
         return json.toString();
     }

@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
+import Chat.server.database.*;
 
 /**
  * Class that represent a Client
@@ -110,6 +115,28 @@ public class Client
     }
 
     /**
+     * Notify to friends of this client
+     * that has connected to the chat
+     */
+    public void notifyOnlineToFriend() throws SQLException, IOException
+    {
+        Connection connection = DatabaseConnection.getConnection();
+
+        Statement stmt = connection.createStatement();
+
+        String query = "SELECT `user2` as `friend` FROM friends WHERE `user1` = '" + this.username + "';";
+
+        ResultSet result = stmt.executeQuery(query);
+
+        while (result.next())
+        {
+            Client friend = Server.server.getClient(result.getString("friend"));
+
+            friend.sendMessage(Message.newConnection(this.username));
+        }
+    }
+
+    /**
      * Blocking method, returing the red message
      * 
      * @return red message
@@ -141,6 +168,16 @@ public class Client
     public int getMessageCounter()
     {
         return this.messageCounter;
+    }
+
+    /**
+     * Close the connection for this client
+     * 
+     * @throws IOException
+     */
+    public void closeConnection() throws IOException
+    {
+        this.socket.close();
     }
 
     /**

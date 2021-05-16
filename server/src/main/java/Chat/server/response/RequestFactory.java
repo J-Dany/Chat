@@ -14,6 +14,8 @@ public class RequestFactory
         {
             case FOR_LOGIN:
                 return new LoginRequest();
+            case FOR_CLOSE_CONNECTION:
+                return new CloseConnectionRequest();
         }
 
         return null;

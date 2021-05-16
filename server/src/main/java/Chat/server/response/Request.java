@@ -12,7 +12,8 @@ public interface Request
 {
     enum RequestReturnValues {
         LOGIN_FAILED,
-        LOGIN_OK
+        LOGIN_OK,
+        CLOSE_CONNECTION
     }
 
     /**
