@@ -79,6 +79,8 @@ public class ClientConnection implements Runnable
                         return;
                     case LOGIN_OK:
                         Server.server.addNewConnectedClient(client.getUsername(), client);
+                        //client.notifyOnlineToFriend();
+                        client.sendListOfFriend();
                         logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                     break;
                     case CLOSE_CONNECTION:
@@ -90,10 +92,14 @@ public class ClientConnection implements Runnable
                 logger.addMsg(LogMessage.info(e.toString()));
                 break;
             }
-            catch (Exception e)
+            catch (IllegalArgumentException e)
             {
                 logger.addMsg(LogMessage.error(e.toString()));
                 break;
+            }
+            catch (Exception e)
+            {
+                logger.addMsg(LogMessage.error(e.toString()));
             }
         }
 

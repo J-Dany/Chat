@@ -8,14 +8,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import Chat.server.database.*;
+import Chat.server.exceptions.FriendNotFound;
 
 /**
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.2.3
+ * @version 1.2.4
  */
 public class Client 
 {
@@ -130,10 +132,70 @@ public class Client
 
         while (result.next())
         {
-            Client friend = Server.server.getClient(result.getString("friend"));
+            if (Server.server.isOnline(result.getString("friend")))
+            {
+                Client friend = Server.server.getClient(result.getString("friend"));
 
-            friend.sendMessage(Message.newConnection(this.username));
+                friend.sendMessage(Message.newConnection(this.username));
+            }
         }
+    }
+
+    /**
+     * Send a message to a friend
+     * *
+     * @param friend friend of this client
+     * @param msg the message
+     * @throws SQLException
+     * @throws FriendNotFound
+     * @throws IOException
+     */
+    public void sendToFriend(String friend, String msg) throws SQLException, FriendNotFound, IOException
+    {
+        Connection connection = DatabaseConnection.getConnection();
+
+        Statement stmt = connection.createStatement();
+
+        String query = "SELECT COUNT(*) as num_rows FROM friends WHERE `user1` = '" + this.username + "' AND `user2` = '" + friend + "'';";
+
+        ResultSet result = stmt.executeQuery(query);
+
+        if (result.next() && result.getInt("num_rows") == 1)
+        {
+            if (Server.server.isOnline(friend))
+            {
+                Client f = Server.server.getClient(friend);
+
+                f.sendMessage(msg);
+            }
+
+            return;
+        }
+
+        throw new FriendNotFound(this.username, friend);
+    }
+
+    /**
+     * Send the list of friend
+     */
+    public void sendListOfFriend() throws SQLException, IOException
+    {
+        ArrayList<String> friends = new ArrayList<>();
+
+        Connection connection = DatabaseConnection.getConnection();
+
+        Statement stmt = connection.createStatement();
+
+        String query = "SELECT user2 as friend FROM friends WHERE `user1` = '" + this.username + "';";
+
+        ResultSet result = stmt.executeQuery(query);
+
+        while (result.next())
+        {
+            friends.add(result.getString("friend"));
+        }
+
+        this.sendMessage(Message.listOfFriend(friends));
     }
 
     /**

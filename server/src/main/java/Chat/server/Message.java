@@ -1,5 +1,7 @@
 package Chat.server;
 
+import java.util.ArrayList;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import Chat.server.exceptions.FieldNotFound;
 
@@ -21,6 +23,7 @@ public class Message
         FOR_GROUP,
         FOR_PRIVATE,
         FOR_LOGIN,
+        FOR_FRIEND_LIST,
         FOR_NEW_CONNECTION,
         FOR_DISCONNECTION,
         FOR_CLOSE_CONNECTION
@@ -110,6 +113,10 @@ public class Message
         return this.json.toString();
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    // Response message                                                            //
+    /////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Returns a login response message
      * 
@@ -138,6 +145,22 @@ public class Message
 
         json.put("Type", TypeOfMessage.FOR_NEW_CONNECTION);
         json.put("Username", username);
+
+        return json.toString();
+    }
+
+    /**
+     * Returns a list of friend response message
+     * 
+     * @param friends the list of friends
+     * @return String
+     */
+    public static String listOfFriend(ArrayList<String> friends)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_FRIEND_LIST);
+        json.put("Friends", new JSONArray(friends));
 
         return json.toString();
     }
