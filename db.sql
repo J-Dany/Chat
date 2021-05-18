@@ -8,7 +8,7 @@ CREATE TABLE `users`(
 	`name` VARCHAR(64) NOT NULL,
 	`surname` VARCHAR(64) NOT NULL,
 	`email` VARCHAR(64) NOT NULL,
-	`photo` VARCHAR(255) NOT NULL
+	`photo` VARCHAR(255)
 );
 
 CREATE TABLE `friends`(
