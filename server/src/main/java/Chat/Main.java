@@ -32,6 +32,14 @@ public class Main
         try
         {
             ////////////////////////////////////
+            // Create an instance of Logger   //
+            // and starts the thread          //
+            ////////////////////////////////////
+            logger = new Logger(dotenv.get("LOG_FILE_PATH"));
+            logger.start();
+
+            logger.addMsg(LogMessage.info("Establishing a connection to the database..."));
+            ////////////////////////////////////
             // Try to establish a connection  //
             // to the database                //
             ////////////////////////////////////
@@ -44,12 +52,7 @@ public class Main
                 System.out.println("Can't establish a connection to the database!");
             }
 
-            ////////////////////////////////////
-            // Create an instance of Logger   //
-            // and starts the thread          //
-            ////////////////////////////////////
-            logger = new Logger(dotenv.get("LOG_FILE_PATH"));
-            logger.start();
+            logger.addMsg(LogMessage.ok("Connection established"));
 
             logger.addMsg(LogMessage.info("Starting the server..."));
 

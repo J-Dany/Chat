@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.json.JSONObject;
 import Chat.server.database.*;
 import Chat.server.exceptions.FriendNotFound;
 
@@ -180,19 +181,33 @@ public class Client
      */
     public void sendListOfFriend() throws SQLException, IOException
     {
-        ArrayList<String> friends = new ArrayList<>();
+        ArrayList<JSONObject> friends = new ArrayList<>();
 
         Connection connection = DatabaseConnection.getConnection();
 
         Statement stmt = connection.createStatement();
+        Statement stmt1 = connection.createStatement();
 
         String query = "SELECT user2 as friend FROM friends WHERE `user1` = '" + this.username + "';";
+        String query1 = "SELECT * FROM messages WHERE sender = '" + this.username + "' ORDER BY data DESC LIMIT 1;";
 
         ResultSet result = stmt.executeQuery(query);
+        ResultSet result1 = stmt1.executeQuery(query1);
 
         while (result.next())
         {
-            friends.add(result.getString("friend"));
+            JSONObject json = new JSONObject();
+
+            json.put("Name", result.getString("friend"));
+            json.put("Online", Server.server.isOnline(result.getString("friend")));
+
+            if (result1.next())
+            {
+                json.put("LastMessage", result1.getString("message"));
+            }
+            
+
+            friends.add(json);
         }
 
         this.sendMessage(Message.listOfFriend(friends));

@@ -155,7 +155,7 @@ public class Message
      * @param friends the list of friends
      * @return String
      */
-    public static String listOfFriend(ArrayList<String> friends)
+    public static String listOfFriend(ArrayList<JSONObject> friends)
     {
         JSONObject json = new JSONObject();
 
