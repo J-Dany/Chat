@@ -3,7 +3,8 @@ CREATE DATABASE `chat`;
 USE `chat`;
 
 CREATE TABLE `users`(
-	`username` VARCHAR(64) NOT NULL PRIMARY KEY,
+	`id_user` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`username` VARCHAR(64) NOT NULL UNIQUE KEY,
 	`password` VARCHAR(255) NOT NULL,
 	`name` VARCHAR(64) NOT NULL,
 	`surname` VARCHAR(64) NOT NULL,
@@ -12,8 +13,8 @@ CREATE TABLE `users`(
 );
 
 CREATE TABLE `friends`(
-	`user1` VARCHAR(64) NOT NULL,
-	`user2` VARCHAR(64) NOT NULL,
+	`user1` INT NOT NULL,
+	`user2` INT NOT NULL,
 	CONSTRAINT `pk_Friends` PRIMARY KEY(`user1`, `user2`),
 	CONSTRAINT `fk_friendsUsers1` FOREIGN KEY (`user1`) REFERENCES `users`(`username`),
 	CONSTRAINT `fk_friendsUsers2` FOREIGN KEY (`user2`) REFERENCES `users`(`username`)
