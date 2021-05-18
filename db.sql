@@ -7,7 +7,7 @@ CREATE TABLE `users`(
 	`password` VARCHAR(255) NOT NULL,
 	`name` VARCHAR(64) NOT NULL,
 	`surname` VARCHAR(64) NOT NULL,
-	`email` VARCHAR(64) NOT NULL,
+	`email` VARCHAR(64) NOT NULL UNIQUE KEY,
 	`photo` VARCHAR(255)
 );
 
