@@ -110,7 +110,6 @@ public class Client
     public void sendMessage(String msg) throws IOException
     {
         WebSocketMessage wbm = new WebSocketMessage(msg);
-        wbm.encodeMessage();
 
         this.writer.write(wbm.getEncodedMessage());
         this.writer.flush();

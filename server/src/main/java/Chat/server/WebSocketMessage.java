@@ -1,4 +1,9 @@
+package Chat.server;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -19,13 +24,14 @@ public class WebSocketMessage
         this.encodedData = Arrays.copyOf(data, data.length);
     }
 
-    public WebSocketMessage(String msg) 
+    public WebSocketMessage(String msg) throws UnsupportedEncodingException
     {
-        this.message = String.copyValueOf(msg.toCharArray());
+        byte[] bytes = msg.getBytes(Charset.forName("UTF-8"));
+        this.message = new String(bytes, 0, bytes.length, "UTF-8");
         this.encodedMessage = ByteBuffer.allocate(4096);
     }
 
-    public void encodeMessage() throws Exception
+    private void encodeMessage() throws IOException
     {
         byte[] messageByte = message.getBytes();
 
@@ -35,7 +41,11 @@ public class WebSocketMessage
 
         long messageSize = message.length();
 
-        if (messageSize <= Math.pow(2, 16)) 
+        if (messageSize <= 125)
+        {
+            this.encodedMessage.put((byte)messageSize);
+        }
+        else if (messageSize <= Math.pow(2, 16)) 
         {
             short mS = (short) messageSize;
 
@@ -58,8 +68,10 @@ public class WebSocketMessage
         }
     }
 
-    public byte[] getEncodedMessage()
+    public byte[] getEncodedMessage() throws IOException
     {
+        this.encodeMessage();
+
         return this.encodedMessage.array();
     }
 
