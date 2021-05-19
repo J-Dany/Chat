@@ -1,6 +1,9 @@
 package Chat.server.response;
 
 import java.sql.ResultSet;
+import java.util.Base64;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.server.Client;
@@ -30,11 +33,16 @@ public class LoginRequest implements Request
             result.beforeFirst();
         }
 
+        String password = Base64.getEncoder().encodeToString(
+            Hashing.sha256().hashString(msg.getPassword(), Charsets.UTF_8).asBytes()
+        );
+
         if (result.next() && num_rows == 1
             &&
-            result.getString("username").equals(msg.getSender()) && result.getString("password").equals(msg.getPassword())
+            result.getString("username").equals(msg.getSender()) && result.getString("password").equals(password)
         )
         {
+            client.setId(result.getInt("id_user"));
             client.setUsername(msg.getSender());
             client.sendMessage(Message.login(true));
             return RequestReturnValues.LOGIN_OK;
@@ -43,5 +51,4 @@ public class LoginRequest implements Request
         client.sendMessage(Message.login(false));
         return RequestReturnValues.LOGIN_FAILED;
     }
-    
 }

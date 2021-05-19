@@ -13,11 +13,12 @@ CREATE TABLE `users`(
 );
 
 CREATE TABLE `friends`(
+	`id_friend` INT NOT NULL PRIMARY KEY,
 	`user1` INT NOT NULL,
 	`user2` INT NOT NULL,
-	CONSTRAINT `pk_Friends` PRIMARY KEY(`user1`, `user2`),
-	CONSTRAINT `fk_friendsUsers1` FOREIGN KEY (`user1`) REFERENCES `users`(`username`),
-	CONSTRAINT `fk_friendsUsers2` FOREIGN KEY (`user2`) REFERENCES `users`(`username`)
+	CONSTRAINT UNIQUE KEY `univoco`(`user1`, `user2`),
+	CONSTRAINT `fk_friendsUsers1` FOREIGN KEY (`user1`) REFERENCES `users`(`id_user`),
+	CONSTRAINT `fk_friendsUsers2` FOREIGN KEY (`user2`) REFERENCES `users`(`id_user`)
 );
 
 CREATE TABLE `groups`(
@@ -30,11 +31,11 @@ CREATE TABLE messages(
 	`data` DATETIME NOT NULL,
 	`message` VARCHAR(512) NOT NULL,
 	`id_group` INT,
-	`sender` VARCHAR(64) NOT NULL,
-	`addresse` VARCHAR(64),
+	`sender` INT NOT NULL,
+	`addresse` INT,
 	CONSTRAINT `fk_messagesGroups` FOREIGN KEY (`id_group`) REFERENCES `groups`(`id_group`),
-	CONSTRAINT `fk_messagesUsersSender` FOREIGN KEY (`sender`) REFERENCES `users`(`username`),
-	CONSTRAINT `fk_messagesUsersAddresse` FOREIGN KEY (addresse) REFERENCES users(username)
+	CONSTRAINT `fk_messagesUsersSender` FOREIGN KEY (`sender`) REFERENCES `users`(`id_user`),
+	CONSTRAINT `fk_messagesUsersAddresse` FOREIGN KEY (addresse) REFERENCES `users`(`id_user`)
 );
 
 CREATE TABLE `partecipants`(

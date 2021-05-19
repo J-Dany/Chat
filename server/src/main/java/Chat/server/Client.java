@@ -28,6 +28,11 @@ public class Client
     private InetAddress address;
 
     /**
+     * The id of the user in the database
+     */
+    private int id;
+
+    /**
      * The username of the client. This
      * will be set after an authentication
      * process
@@ -73,6 +78,16 @@ public class Client
     {
         this.username = username;
         this.messageCounter = 0;
+    }
+
+    /**
+     * Sets the id of this client
+     * 
+     * @param id
+     */
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     /**
@@ -188,18 +203,23 @@ public class Client
         Statement stmt = connection.createStatement();
         Statement stmt1 = connection.createStatement();
 
-        String query = "SELECT user2 as friend FROM friends WHERE `user1` = '" + this.username + "';";
-        String query1 = "SELECT * FROM messages WHERE sender = '" + this.username + "' ORDER BY data DESC LIMIT 1;";
+        String query = "SELECT users.id_user as friend_id, users.username as friend, users.photo as photo FROM friends" +
+        " INNER JOIN users ON friends.user2 = users.id_user " +
+        " WHERE `user1` = " + this.id + ";";
 
         ResultSet result = stmt.executeQuery(query);
-        ResultSet result1 = stmt1.executeQuery(query1);
 
         while (result.next())
         {
             JSONObject json = new JSONObject();
 
+            String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + " ORDER BY data DESC LIMIT 1;";
+
+            ResultSet result1 = stmt1.executeQuery(query1);
+
             json.put("Name", result.getString("friend"));
             json.put("Online", Server.server.isOnline(result.getString("friend")));
+            json.put("Photo", result.getString("photo"));
 
             if (result1.next())
             {
