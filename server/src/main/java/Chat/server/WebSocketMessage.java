@@ -1,11 +1,10 @@
-package Chat.server;
-
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.1.1
  */
 public class WebSocketMessage 
 {
@@ -13,7 +12,7 @@ public class WebSocketMessage
     private String decoded;
 
     private String message;
-    private byte[] encodedMessage;
+    private ByteBuffer encodedMessage;
 
     public WebSocketMessage(byte[] data) throws Exception 
     {
@@ -23,54 +22,45 @@ public class WebSocketMessage
     public WebSocketMessage(String msg) 
     {
         this.message = String.copyValueOf(msg.toCharArray());
-        this.encodedMessage = new byte[1024];
+        this.encodedMessage = ByteBuffer.allocate(4096);
     }
 
-    public void encodeMessage() 
+    public void encodeMessage() throws Exception
     {
         byte[] messageByte = message.getBytes();
 
         byte firstByte = (byte) 0x81; // 129
 
-        this.encodedMessage[0] = firstByte;
+        this.encodedMessage.put(firstByte);
 
         long messageSize = message.length();
-        int indexFirstByteOfMessage = 2;
 
-        if (messageSize <= 125) 
+        if (messageSize <= Math.pow(2, 16)) 
         {
-            this.encodedMessage[1] = (byte) messageSize;
-        } 
-        else if (messageSize <= Math.pow(2, 16)) 
-        {
-            this.encodedMessage[1] = (byte) 126;
-            this.encodedMessage[2] = (byte) (messageSize & 0x000000000000FF00L);
-            this.encodedMessage[3] = (byte) (messageSize & 0x00000000000000FFL);
-            indexFirstByteOfMessage = 4;
+            short mS = (short) messageSize;
+
+            byte[] size = ByteBuffer.allocate(2).putShort(mS).array();
+            
+            this.encodedMessage.put((byte) 126);
+            this.encodedMessage.put(size);
         } 
         else 
         {
-            this.encodedMessage[1] = (byte) 127;
-            this.encodedMessage[2] = (byte) (messageSize & 0xFF00000000000000L);
-            this.encodedMessage[3] = (byte) (messageSize & 0x00FF000000000000L);
-            this.encodedMessage[4] = (byte) (messageSize & 0x0000FF0000000000L);
-            this.encodedMessage[5] = (byte) (messageSize & 0x000000FF00000000L);
-            this.encodedMessage[6] = (byte) (messageSize & 0x00000000FF000000L);
-            this.encodedMessage[7] = (byte) (messageSize & 0x0000000000FF0000L);
-            this.encodedMessage[8] = (byte) (messageSize & 0x000000000000FF00L);
-            this.encodedMessage[9] = (byte) (messageSize & 0x00000000000000FFL);
-            indexFirstByteOfMessage = 10;
+            byte[] size = ByteBuffer.allocate(8).putLong(messageSize).array();
+
+            this.encodedMessage.put((byte) 127);
+            this.encodedMessage.put(size);
         }
 
-        for (int i = indexFirstByteOfMessage, j = 0; j < messageByte.length; ++i, ++j) 
+        for (int j = 0; j < messageByte.length; ++j) 
         {
-            this.encodedMessage[i] = messageByte[j];
+            this.encodedMessage.put(messageByte[j]);
         }
     }
 
     public byte[] getEncodedMessage()
     {
-        return this.encodedMessage;
+        return this.encodedMessage.array();
     }
 
     public void decodeData() throws Exception 
