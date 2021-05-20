@@ -17,6 +17,7 @@ public class WebSocketMessage
     private String decoded;
 
     private String message;
+    private long encodeMessageSize;
     private ByteBuffer encodedMessage;
 
     public WebSocketMessage(byte[] data) throws Exception 
@@ -40,6 +41,7 @@ public class WebSocketMessage
         this.encodedMessage.put(firstByte);
 
         long messageSize = message.length();
+        this.encodeMessageSize = messageSize;
 
         if (messageSize <= 125)
         {
@@ -72,7 +74,24 @@ public class WebSocketMessage
     {
         this.encodeMessage();
 
-        return this.encodedMessage.array();
+        byte[] tmp = null;
+
+        if (this.encodeMessageSize <= 125)
+        {
+            tmp = Arrays.copyOf(this.encodedMessage.array(), 2 + (int) this.encodeMessageSize);
+        }
+        else if (this.encodeMessageSize <= Math.pow(2, 16))
+        {
+            tmp = Arrays.copyOf(this.encodedMessage.array(), 4 + (int) this.encodeMessageSize);
+        }
+        else
+        {
+            tmp = Arrays.copyOf(this.encodedMessage.array(), 10 + (int) this.encodeMessageSize);
+        }
+
+        this.encodedMessage.clear();
+
+        return tmp;
     }
 
     public void decodeData() throws Exception 

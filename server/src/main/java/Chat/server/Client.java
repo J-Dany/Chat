@@ -141,7 +141,11 @@ public class Client
 
         Statement stmt = connection.createStatement();
 
-        String query = "SELECT `user2` as `friend` FROM friends WHERE `user1` = '" + this.username + "';";
+        String query = "SELECT `users`.`username` as `friend` " +
+            " FROM friends " +
+            " INNER JOIN `users` " +
+            " ON `users`.`id_user` = `friends`.`user2`" +
+            " WHERE `friends`.`user1` = " + this.id + ";";
 
         ResultSet result = stmt.executeQuery(query);
 

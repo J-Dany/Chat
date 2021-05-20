@@ -79,8 +79,8 @@ public class ClientConnection implements Runnable
                         return;
                     case LOGIN_OK:
                         Server.server.addNewConnectedClient(client.getUsername(), client);
-                        //client.notifyOnlineToFriend();
                         client.sendListOfFriend();
+                        client.notifyOnlineToFriend();
                         logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                     break;
                     case CLOSE_CONNECTION:
