@@ -13,7 +13,9 @@ public interface Request
     enum RequestReturnValues {
         LOGIN_FAILED,
         LOGIN_OK,
-        CLOSE_CONNECTION
+        CLOSE_CONNECTION,
+        PRIVATE_MESSAGE,
+        CANT_SEND_PRIVATE_MESSAGE_BECAUSE_OFFLINE
     }
 
     /**

@@ -12,7 +12,7 @@ import Chat.server.response.RequestFactory;
 
 /***
  * @author Daniele Castiglia
- * @version 1.0.1
+ * @version 1.0.2
  */
 public class ClientConnection implements Runnable
 {
@@ -59,6 +59,12 @@ public class ClientConnection implements Runnable
 
                 Message msg = null;
 
+                ////////////////////////////////////
+                // Try to read the message, if    //
+                // you can't just ignore it and   //
+                // listen again for incoming      //
+                // message                        //
+                ////////////////////////////////////
                 try
                 {
                     msg = new Message(new WebSocketMessage(buffer));
@@ -66,12 +72,20 @@ public class ClientConnection implements Runnable
                 catch (Exception e)
                 {
                     this.logger.addMsg(LogMessage.error(e.toString()));
+                    continue;
                 }
 
+                ////////////////////////////////////
+                // Instanciating the response for //
+                // the request                    //
+                ////////////////////////////////////
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
 
                 this.logger.addMsg(LogMessage.info("Handler instancieted " + this.client.getAddress() + ": " + request.getClass().getName()));
 
+                ////////////////////////////////////
+                // Handle the request             //
+                ////////////////////////////////////
                 switch (request.handle(msg, this.client, this.logger))
                 {
                     case LOGIN_FAILED:
@@ -83,15 +97,30 @@ public class ClientConnection implements Runnable
                         client.notifyOnlineToFriend();
                         logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
                     break;
+                    case PRIVATE_MESSAGE:
+                        logger.addMsg(LogMessage.ok("Message sent"));
+                    break;
+                    case CANT_SEND_PRIVATE_MESSAGE_BECAUSE_OFFLINE:
+                        logger.addMsg(LogMessage.info("Can't send message because the friend is offline"));
+                    break;
                     case CLOSE_CONNECTION:
                         throw new CloseConnection(client.getUsername());
                 }
             }
+            ////////////////////////////////////
+            // Exception for closing the      //
+            // connection                     //
+            // (THIS IS NOT AN ERROR)         //
+            ////////////////////////////////////
             catch (CloseConnection e)
             {
                 logger.addMsg(LogMessage.info(e.toString()));
                 break;
             }
+            ////////////////////////////////////
+            // In case of bad close           //
+            // connection request             //
+            ////////////////////////////////////
             catch (IllegalArgumentException e)
             {
                 logger.addMsg(LogMessage.error(e.toString()));
@@ -103,6 +132,10 @@ public class ClientConnection implements Runnable
             }
         }
 
+        ////////////////////////////////////
+        // Remove the client from the     //
+        // server                         //
+        ////////////////////////////////////
         this.logger.addMsg(LogMessage.ok("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
         Server.server.removeConnectedClient(client.getUsername());
     }

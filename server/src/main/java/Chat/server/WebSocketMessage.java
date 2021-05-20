@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.1.1
+ * @version 1.1.2
  */
 public class WebSocketMessage 
 {

@@ -16,6 +16,8 @@ public class RequestFactory
                 return new LoginRequest();
             case FOR_CLOSE_CONNECTION:
                 return new CloseConnectionRequest();
+            case FOR_PRIVATE:
+                return new PrivateMessageRequest();
         }
 
         return null;

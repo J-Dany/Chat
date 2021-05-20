@@ -91,6 +91,16 @@ public class Client
     }
 
     /**
+     * Returns the id of this client
+     * 
+     * @return int
+     */
+    public int getId()
+    {
+        return this.id;
+    }
+
+    /**
      * Get the username
      * 
      * @return String
@@ -171,11 +181,16 @@ public class Client
      */
     public void sendToFriend(String friend, String msg) throws SQLException, FriendNotFound, IOException
     {
+        if (!Server.server.isOnline(friend))
+        {
+            return;
+        }
+
         Connection connection = DatabaseConnection.getConnection();
 
         Statement stmt = connection.createStatement();
 
-        String query = "SELECT COUNT(*) as num_rows FROM friends WHERE `user1` = '" + this.username + "' AND `user2` = '" + friend + "'';";
+        String query = "SELECT COUNT(*) as num_rows FROM friends WHERE `user1` = " + this.id + " AND `user2` = " + Server.server.getClient(friend).id + ";";
 
         ResultSet result = stmt.executeQuery(query);
 

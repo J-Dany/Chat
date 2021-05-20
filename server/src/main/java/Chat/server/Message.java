@@ -1,5 +1,7 @@
 package Chat.server;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,7 +9,7 @@ import Chat.server.exceptions.FieldNotFound;
 
 /**
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class Message
 {
@@ -75,6 +77,8 @@ public class Message
     /**
      * Returns the content of the message
      * 
+     * (ONLY FOR PRIVATE OR GROUP MESSAGE)
+     * 
      * @return the message
      * @throws FieldNotFound
      */
@@ -86,6 +90,24 @@ public class Message
         }
 
         return json.getString("Message");
+    }
+    
+    /**
+     * Returns the addresse of the message
+     * 
+     * (ONLY FOR PRIVATE MESSAGE)
+     * 
+     * @return String
+     * @throws FieldNotFound
+     */
+    public String getAddresse() throws FieldNotFound
+    {
+        if (!json.has("Addresse"))
+        {
+            throw new FieldNotFound("Addresse");
+        }
+
+        return json.getString("Addresse");
     }
 
     /**
@@ -102,6 +124,24 @@ public class Message
         }
 
         return json.getString("Sender");
+    }
+
+    /**
+     * Returns the data of the message
+     * 
+     * (ONLY FOR PRIVATE OR GROUP MESSAGE)
+     * 
+     * @return
+     * @throws FieldNotFound
+     */
+    public String getData() throws FieldNotFound
+    {
+        if (!json.has("Data"))
+        {
+            throw new FieldNotFound("Data");
+        }
+
+        return json.getString("Data");
     }
 
     /**
@@ -161,6 +201,25 @@ public class Message
 
         json.put("Type", TypeOfMessage.FOR_FRIEND_LIST);
         json.put("Friends", new JSONArray(friends));
+
+        return json.toString();
+    }
+
+    /**
+     * Build a private messagge response
+     * 
+     * @param sender the sender
+     * @param message the message
+     * @return String
+     */
+    public static String privateMessage(String sender, String message)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_PRIVATE);
+        json.put("Sender", sender);
+        json.put("Message", message);
+        json.put("Data", LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-LL-dd HH:mm:ss")));
 
         return json.toString();
     }
