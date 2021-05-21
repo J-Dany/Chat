@@ -163,6 +163,25 @@ public class Message
      * @param status true (login ok) or false (login failed)
      * @return String
      */
+    public static String login(boolean status, int id)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_LOGIN);
+        json.put("Status", status);
+        json.put("Id", id);
+
+        return json.toString();
+    }
+
+    /**
+     * Returns a login response message
+     * 
+     * (ONLY FOR FAILED LOGIN)
+     * 
+     * @param status true (login ok) or false (login failed)
+     * @return String
+     */
     public static String login(boolean status)
     {
         JSONObject json = new JSONObject();

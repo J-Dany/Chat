@@ -44,7 +44,7 @@ public class LoginRequest implements Request
         {
             client.setId(result.getInt("id_user"));
             client.setUsername(msg.getSender());
-            client.sendMessage(Message.login(true));
+            client.sendMessage(Message.login(true, result.getInt("id_user")));
             return RequestReturnValues.LOGIN_OK;
         }
         

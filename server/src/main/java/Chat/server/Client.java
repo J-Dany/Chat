@@ -236,6 +236,7 @@ public class Client
             ResultSet result1 = stmt1.executeQuery(query1);
 
             json.put("Name", result.getString("friend"));
+            json.put("IdFriend", result.getInt("friend_id"));
             json.put("Online", Server.server.isOnline(result.getString("friend")));
             json.put("Photo", result.getString("photo"));
 
@@ -243,7 +244,6 @@ public class Client
             {
                 json.put("LastMessage", result1.getString("message"));
             }
-            
 
             friends.add(json);
         }
