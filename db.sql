@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS `chat`;
 CREATE DATABASE `chat`;
 USE `chat`;
 
-CREATE TABLE `users`(
+CREATE TABLE users(
 	`id_user` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`username` VARCHAR(64) NOT NULL UNIQUE KEY,
 	`password` VARCHAR(255) NOT NULL,
@@ -12,8 +12,8 @@ CREATE TABLE `users`(
 	`photo` VARCHAR(255)
 );
 
-CREATE TABLE `friends`(
-	`id_friend` INT NOT NULL PRIMARY KEY,
+CREATE TABLE friends(
+	`id_friend` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`user1` INT NOT NULL,
 	`user2` INT NOT NULL,
 	CONSTRAINT UNIQUE KEY `univoco`(`user1`, `user2`),
@@ -21,7 +21,7 @@ CREATE TABLE `friends`(
 	CONSTRAINT `fk_friendsUsers2` FOREIGN KEY (`user2`) REFERENCES `users`(`id_user`)
 );
 
-CREATE TABLE `groups`(
+CREATE TABLE crowds(
 	`id_group` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`group_name` VARCHAR(255) NOT NULL
 );
@@ -33,15 +33,15 @@ CREATE TABLE messages(
 	`id_group` INT,
 	`sender` INT NOT NULL,
 	`addresse` INT,
-	CONSTRAINT `fk_messagesGroups` FOREIGN KEY (`id_group`) REFERENCES `groups`(`id_group`),
+	CONSTRAINT `fk_messagesGroups` FOREIGN KEY (`id_group`) REFERENCES `crowds`(`id_group`),
 	CONSTRAINT `fk_messagesUsersSender` FOREIGN KEY (`sender`) REFERENCES `users`(`id_user`),
 	CONSTRAINT `fk_messagesUsersAddresse` FOREIGN KEY (addresse) REFERENCES `users`(`id_user`)
 );
 
-CREATE TABLE `partecipants`(
+CREATE TABLE partecipants(
 	`id_group` INT NOT NULL,
-	`username` VARCHAR(64) NOT NULL,
-	CONSTRAINT `pk_Partecipants` PRIMARY KEY(`id_group`, `username`),
-	CONSTRAINT `fk_partecipantsUsers` FOREIGN KEY (`username`) REFERENCES `users`(`username`),
-	CONSTRAINT `fk_partecipantsGroups` FOREIGN KEY (`id_group`) REFERENCES `groups`(`id_group`)
+	`id_user` INT NOT NULL,
+	CONSTRAINT `pk_Partecipants` PRIMARY KEY(`id_group`, `id_user`),
+	CONSTRAINT `fk_partecipantsUsers` FOREIGN KEY (`id_user`) REFERENCES `users`(`id_user`),
+	CONSTRAINT `fk_partecipantsGroups` FOREIGN KEY (`id_group`) REFERENCES `crowds`(`id_group`)
 );
