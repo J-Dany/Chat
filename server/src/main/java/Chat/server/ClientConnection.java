@@ -133,6 +133,19 @@ public class ClientConnection implements Runnable
         }
 
         ////////////////////////////////////
+        // Notify to friend the           //
+        // disconnection                  //
+        ////////////////////////////////////
+        try
+        {
+            client.notifyDisconnectionToFriend();
+        }
+        catch (Exception e)
+        {
+            this.logger.addMsg(LogMessage.error(e.toString()));
+        }
+
+        ////////////////////////////////////
         // Remove the client from the     //
         // server                         //
         ////////////////////////////////////

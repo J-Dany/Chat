@@ -9,7 +9,7 @@ import Chat.server.exceptions.FieldNotFound;
 
 /**
  * @author Daniele Castiglia
- * @version 1.2.0
+ * @version 1.3.0
  */
 public class Message
 {
@@ -203,6 +203,19 @@ public class Message
         JSONObject json = new JSONObject();
 
         json.put("Type", TypeOfMessage.FOR_NEW_CONNECTION);
+        json.put("Username", username);
+
+        return json.toString();
+    }
+
+    /**
+     * 
+     */
+    public static String disconnection(String username)
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_DISCONNECTION);
         json.put("Username", username);
 
         return json.toString();

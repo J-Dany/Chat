@@ -18,7 +18,7 @@ import Chat.server.exceptions.FriendNotFound;
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.2.4
+ * @version 1.3.4
  */
 public class Client 
 {
@@ -142,6 +142,35 @@ public class Client
     }
 
     /**
+     * As {@code notifyOnlineToFriend} but for
+     * disconnection
+     */
+    public void notifyDisconnectionToFriend() throws SQLException, IOException
+    {
+        Connection connection = DatabaseConnection.getConnection();
+
+        Statement stmt = connection.createStatement();
+
+        String query = "SELECT `users`.`username` as `friend` " +
+            " FROM friends " +
+            " INNER JOIN `users` " +
+            " ON `users`.`id_user` = `friends`.`user2`" +
+            " WHERE `friends`.`user1` = " + this.id + ";";
+
+        ResultSet result = stmt.executeQuery(query);
+
+        while (result.next())
+        {
+            if (Server.server.isOnline(result.getString("friend")))
+            {
+                Client friend = Server.server.getClient(result.getString("friend"));
+
+                friend.sendMessage(Message.disconnection(this.username));
+            }
+        }
+    }
+
+    /**
      * Notify to friends of this client
      * that has connected to the chat
      */
@@ -231,7 +260,9 @@ public class Client
         {
             JSONObject json = new JSONObject();
 
-            String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + " ORDER BY data DESC LIMIT 1;";
+            String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + 
+            "OR sender = " + result.getInt("friend_id") + " AND addresse = " + this.id + 
+            " ORDER BY data LIMIT 1;";
 
             ResultSet result1 = stmt1.executeQuery(query1);
 
