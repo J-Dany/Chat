@@ -1,5 +1,6 @@
 package Chat.server;
 
+import java.net.SocketException;
 import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -122,6 +123,11 @@ public class ClientConnection implements Runnable
             // connection request             //
             ////////////////////////////////////
             catch (IllegalArgumentException e)
+            {
+                logger.addMsg(LogMessage.error(e.toString()));
+                break;
+            }
+            catch (SocketException e)
             {
                 logger.addMsg(LogMessage.error(e.toString()));
                 break;
