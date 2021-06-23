@@ -223,6 +223,15 @@ public class Console extends Thread
             }
         });
 
+        this.handlers.put("gui", new Handler()
+        {
+            @Override
+            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
+            {
+                Server.server.startGui();
+            }
+        });
+
         this.handlers.put("connected", new Handler()
         {
             @Override

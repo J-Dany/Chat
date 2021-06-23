@@ -3,12 +3,14 @@ package Chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.console.Console;
+import Chat.gui.ServerGUI;
 import Chat.server.exceptions.ClientAlreadyConnected;
 import io.github.cdimascio.dotenv.*;
 
@@ -60,6 +62,17 @@ public class Server extends Thread
     private HashMap<String, Client> banned;
 
     /**
+     * The graphical interface for the
+     * server
+     */
+    private ServerGUI gui;
+
+    /**
+     * The list of logs for this instance
+     */
+    private ArrayList<LogMessage> logs;
+
+    /**
      * An HashMap containing all client
      * authenticated and connected
      */
@@ -101,6 +114,9 @@ public class Server extends Thread
         this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
         this.connected = new HashMap<>();
+        this.gui = new ServerGUI();
+        this.logs = new ArrayList<>();
+        server = this;
     }
 
     /**
@@ -117,13 +133,14 @@ public class Server extends Thread
         this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
         this.connected = new HashMap<>();
+        this.gui = new ServerGUI();
+        this.logs = new ArrayList<>();
+        server = this;
     }
 
     @Override
     public void run()
     {
-        server = this;
-
         this.console = new Console(this, this.logger);
 
         ////////////////////////////////////
@@ -162,7 +179,7 @@ public class Server extends Thread
                 }
                 else
                 {
-                    this.logger.addMsg(LogMessage.error(e.toString()));
+                    e.printStackTrace();
                 }
             }
         }
@@ -190,6 +207,20 @@ public class Server extends Thread
     }
 
     /**
+     * Upgrade logs for this instance
+     * @param msg
+     */
+    public void upgradeLogs(LogMessage msg)
+    {
+        this.logs.add(msg);
+
+        if (this.gui.isOn())
+        {
+            this.gui.upgradeLogs(msg);
+        }
+    }
+
+    /**
      * Send a message to every client connected
      * 
      * @param msg
@@ -212,6 +243,26 @@ public class Server extends Thread
     }
 
     /**
+     * Starts the graphical interface
+     */
+    public void startGui()
+    {
+        try
+        {
+            String[] args = {};
+
+            gui.setOn(true);
+            gui.main(args);
+
+            gui = new ServerGUI();
+        }
+        catch (Exception e)
+        {
+            this.logger.addMsg(LogMessage.error(e.toString()));
+        }
+    }
+
+    /**
      * When a client connects and authenticated, the thread
      * that handle that connection will call this method
      * 
@@ -227,6 +278,11 @@ public class Server extends Thread
         }
         
         this.connected.put(username, client);
+        
+        if (this.gui.isOn())
+        {
+            this.gui.upgradeListUsers(client);
+        }
     }
 
     /**
@@ -235,6 +291,11 @@ public class Server extends Thread
      */
     public void removeConnectedClient(String username)
     {
+        if (this.gui.isOn())
+        {
+            this.gui.removeUser(this.connected.get(username));
+        }
+
         this.connected.remove(username);
     }
 
@@ -262,14 +323,20 @@ public class Server extends Thread
 
     /**
      * Release the resource
+     * 
+     * @throws IOException
+     * @throws InterruptedException
      */
     public void close() throws IOException, InterruptedException
     {
         this.logger.addMsg(LogMessage.info("Closing the server"));
+
         for (Client c : this.connected.values())
         {
+            c.sendMessage(Message.closingServer());
             c.closeConnection();
         }
+
         this.threadPool.shutdown();
         this.socket.close();
         this.interrupt();

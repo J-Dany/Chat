@@ -48,5 +48,6 @@ For now, you can use these commands:
 - **exit** || **stop** || **close** => stops the server
 - **connected** => prints out clients that are connected right now
 - **history** => prints out the list of command typed before
+- **gui** => starts a graphical interface that can handle the server
 
 ##### Made by Daniele Castiglia

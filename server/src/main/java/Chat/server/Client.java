@@ -262,7 +262,7 @@ public class Client
 
             String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + 
             " OR sender = " + result.getInt("friend_id") + " AND addresse = " + this.id + 
-            " ORDER BY data LIMIT 1;";
+            " ORDER BY data DESC LIMIT 1;";
 
             ResultSet result1 = stmt1.executeQuery(query1);
 
@@ -333,5 +333,11 @@ public class Client
     public InetAddress getAddress()
     {
         return this.address;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.username + " [" + this.address + "]";
     }
 }

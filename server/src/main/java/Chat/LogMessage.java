@@ -8,7 +8,7 @@ import Chat.Logger.LoggerType;
  * Class that represent a log message
  * 
  * @author Daniele Castiglia
- * @version 1.1.1
+ * @version 1.2.1
  */
 public class LogMessage 
 {
@@ -31,7 +31,7 @@ public class LogMessage
 
     /**
      * Represents the time where this
-     * log message is instancieted
+     * log message is instantiated
      */
     private String timeOfLogging;
 
@@ -39,7 +39,7 @@ public class LogMessage
      * Constructor
      * 
      * @param type log type
-     * @param msg the messagge
+     * @param msg the message
     */
     private LogMessage(LoggerType type, String msg)
     {
@@ -47,6 +47,16 @@ public class LogMessage
         this.msg = msg;
         this.threadName = Thread.currentThread().getName();
         this.timeOfLogging = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-LL-dd HH:mm:ss"));
+    }
+
+    /**
+     * Returns the logger type of this message
+     * 
+     * @return LoggerType
+     */
+    public LoggerType getTypeOfMessage()
+    {
+        return this.type;
     }
 
     /**

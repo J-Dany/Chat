@@ -9,6 +9,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 repositories {
@@ -22,12 +23,14 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'org.json:json:20210307'
     implementation 'mysql:mysql-connector-java:8.0.25'
+    implementation 'org.openjfx:javafx:11'
 
     compile 'com.google.guava:guava:29.0-jre'
     compile 'io.github.cdimascio:java-dotenv:5.2.2'
     compile 'commons-codec:commons-codec:1.15'
     compile 'org.json:json:20210307'
     compile 'mysql:mysql-connector-java:8.0.25'
+    compile 'org.openjfx:javafx:11'
 }
 
 java {
@@ -35,6 +38,11 @@ java {
         sourceCompatibility = "VERSION_14"
         targetCompatibility = "VERSION_14"
     }
+}
+
+javafx {
+    version = "11.0.2"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 application {
@@ -48,6 +56,6 @@ jar {
     }
 
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

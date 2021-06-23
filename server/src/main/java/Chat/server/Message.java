@@ -9,7 +9,7 @@ import Chat.server.exceptions.FieldNotFound;
 
 /**
  * @author Daniele Castiglia
- * @version 1.3.0
+ * @version 1.4.0
  */
 public class Message
 {
@@ -28,7 +28,8 @@ public class Message
         FOR_FRIEND_LIST,
         FOR_NEW_CONNECTION,
         FOR_DISCONNECTION,
-        FOR_CLOSE_CONNECTION
+        FOR_CLOSE_CONNECTION,
+        FOR_SERVER_CLOSING
     }
 
     /**
@@ -145,6 +146,22 @@ public class Message
     }
 
     /**
+     * Returns the HM field (hour and minute)
+     * 
+     * @return String
+     * @throws FieldNotFound
+     */
+    public String getHM() throws FieldNotFound
+    {
+        if (!json.has("HM"))
+        {
+            throw new FieldNotFound("HM");
+        }
+
+        return json.getString("HM");
+    }
+
+    /**
      * Returns the entire json received
      * @return the json received
      */
@@ -155,6 +172,7 @@ public class Message
 
     /////////////////////////////////////////////////////////////////////////////////
     // Response message                                                            //
+    //                                                                             //
     /////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -242,16 +260,31 @@ public class Message
      * 
      * @param sender the sender
      * @param message the message
+     * @param hM the hour and the minute when the client sent the message
      * @return String
      */
-    public static String privateMessage(String sender, String message)
+    public static String privateMessage(String sender, String message, String hM)
     {
         JSONObject json = new JSONObject();
 
         json.put("Type", TypeOfMessage.FOR_PRIVATE);
         json.put("Sender", sender);
         json.put("Message", message);
-        json.put("Data", LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-LL-dd HH:mm:ss")));
+        json.put("Data", hM);
+
+        return json.toString();
+    }
+
+    /**
+     * Build a closing server message response
+     * 
+     * @return String
+     */
+    public static String closingServer()
+    {
+        JSONObject json = new JSONObject();
+
+        json.put("Type", TypeOfMessage.FOR_SERVER_CLOSING);
 
         return json.toString();
     }

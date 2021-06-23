@@ -18,5 +18,4 @@ public class CloseConnectionRequest implements Request
         
         return RequestReturnValues.CLOSE_CONNECTION;
     }
-    
 }

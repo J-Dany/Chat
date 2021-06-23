@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import Chat.server.Server;
+
 /**
  * Class for logging messages
  * 
@@ -36,11 +38,12 @@ public class Logger extends Thread
     private PrintWriter writer;
 
     /**
-     * Type of log messagge.
+     * Type of log message.
+     * 
      * At this time, it can be:
      * - OK => an operation returns successfully 
-     * - ER => stands for "error", represents a messagge error
-     * - IN => stands for "info", represents a info messagge
+     * - ER => stands for "error", represents a message error
+     * - IN => stands for "info", represents a info message
      */
     public enum LoggerType
     {
@@ -90,6 +93,11 @@ public class Logger extends Thread
         try
         {
             this.queue.add(msg);
+
+            if (Server.server != null)
+            {
+                Server.server.upgradeLogs(msg);
+            }
         }
         catch (Exception e)
         {
