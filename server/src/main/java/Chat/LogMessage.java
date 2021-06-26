@@ -19,7 +19,7 @@ public class LogMessage
     private LoggerType type;
 
     /**
-     * The messagge
+     * The message
      */
     private String msg;
     

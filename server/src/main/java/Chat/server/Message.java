@@ -1,7 +1,5 @@
 package Chat.server;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,14 +20,22 @@ public class Message
      * Types of message
      */
     public enum TypeOfMessage {
+        ////////////////////////////////////
+        // Types of request               //
+        // client -> server               //
+        ////////////////////////////////////
         FOR_GROUP,
         FOR_PRIVATE,
         FOR_LOGIN,
-        FOR_FRIEND_LIST,
-        FOR_NEW_CONNECTION,
-        FOR_DISCONNECTION,
         FOR_CLOSE_CONNECTION,
-        FOR_SERVER_CLOSING
+        ////////////////////////////////////
+        // Types of info message          //
+        // server -> client               //
+        ////////////////////////////////////
+        FOR_SERVER_CLOSING,
+        FOR_FRIEND_LIST,
+        FOR_DISCONNECTION,
+        FOR_NEW_CONNECTION
     }
 
     /**
@@ -92,7 +98,7 @@ public class Message
 
         return json.getString("Message");
     }
-    
+
     /**
      * Returns the addresse of the message
      * 
@@ -256,7 +262,7 @@ public class Message
     }
 
     /**
-     * Build a private messagge response
+     * Build a private message response
      * 
      * @param sender the sender
      * @param message the message

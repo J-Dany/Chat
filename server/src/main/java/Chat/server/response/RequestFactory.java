@@ -18,8 +18,8 @@ public class RequestFactory
                 return new CloseConnectionRequest();
             case FOR_PRIVATE:
                 return new PrivateMessageRequest();
+            default:
+                return null;
         }
-
-        return null;
     }
 }

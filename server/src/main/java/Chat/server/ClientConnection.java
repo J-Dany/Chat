@@ -23,12 +23,12 @@ public class ClientConnection implements Runnable
     private Client client;
 
     /**
-     * Reference to the loggger
+     * Reference to the logger
      */
     private Logger logger;
 
     /**
-     * Constrructor
+     * Constructor
      * @param c the client that this connection will handle
      */
     public ClientConnection(Client c, Logger log)
@@ -77,12 +77,12 @@ public class ClientConnection implements Runnable
                 }
 
                 ////////////////////////////////////
-                // Instanciating the response for //
+                // Instantiating the response for //
                 // the request                    //
                 ////////////////////////////////////
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
 
-                this.logger.addMsg(LogMessage.info("Handler instancieted " + this.client.getAddress() + ": " + request.getClass().getName()));
+                this.logger.addMsg(LogMessage.info("Handler instantiated " + this.client.getAddress() + ": " + request.getClass().getName()));
 
                 ////////////////////////////////////
                 // Handle the request             //

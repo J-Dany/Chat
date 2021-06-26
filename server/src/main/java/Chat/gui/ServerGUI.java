@@ -22,6 +22,7 @@ public class ServerGUI extends Application
     private boolean on = false;
     private GuiController controller;
     private static ServerGUI instance;
+    private Stage primaryStage;
 
     public static void main(String[] args)
     {
@@ -59,6 +60,8 @@ public class ServerGUI extends Application
                 instance.controller.upgradeListUsers(c.toString());
             }
         });
+
+        instance.primaryStage = primaryStage;
 
         ////////////////////////////////////
         // Instantiated a Scene object    //
@@ -149,5 +152,15 @@ public class ServerGUI extends Application
     public void stop()
     {
         on = false;
+    }
+
+    public static ServerGUI getInstance()
+    {
+        return instance;
+    }
+
+    public Stage getPrimaryStage()
+    {
+        return instance.primaryStage;
     }
 }

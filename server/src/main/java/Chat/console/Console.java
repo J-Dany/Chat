@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Stack;
-
 import Chat.LogMessage;
 import Chat.Logger;
-import Chat.server.Client;
+import Chat.console.handlers.CloseHandler;
+import Chat.console.handlers.ConnectedHandler;
+import Chat.console.handlers.GuiHandler;
+import Chat.console.handlers.HistoryHandler;
 import Chat.server.Server;
 
 /**
@@ -54,7 +56,7 @@ public class Console extends Thread
         this.ignoredCommand = new ArrayList<>();
         this.history = new Stack<>();
         this.handlers = new HashMap<>();
-        this.setHanderls();
+        this.setHandlers();
         this.setIgnoredCommands();
         this.server = server;
         this.logger = logger;
@@ -64,7 +66,7 @@ public class Console extends Thread
     public void run()
     {
         ////////////////////////////////////
-        // Instatiating the object for    //
+        // Instantiating the object for   //
         // reading from standard input    //
         ////////////////////////////////////
         Scanner input = new Scanner(System.in);
@@ -105,13 +107,13 @@ public class Console extends Thread
                 }
 
                 ////////////////////////////////////
-                // Instatiating the arguments     //
+                // Instantiating the arguments     //
                 // list                           //
                 ////////////////////////////////////
                 ArrayList<String> args = new ArrayList<>();
 
                 ////////////////////////////////////
-                // Filling the arraylist with     //
+                // Filling the array list with    //
                 // the written params             //
                 ////////////////////////////////////
                 for (int i = 1; i < arguments.length; ++i)
@@ -155,7 +157,7 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (UnexpectedClosedConsole e)
             {
-                
+                this.logger.addMsg(LogMessage.error(e.toString()));
                 break;
             }
             ////////////////////////////////////
@@ -184,80 +186,31 @@ public class Console extends Thread
      * Set up every commands
      * available
      */
-    private void setHanderls()
+    private void setHandlers()
     {
-        Handler closeHandler = new Handler()
-        {
-            @Override
-            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
-            {
-                throw new CloseConsoleException();
-            }
-        };
-
+        ////////////////////////////////////
+        // Setting the "close" handler    //
+        ////////////////////////////////////
+        Handler closeHandler = new CloseHandler();
         this.handlers.put("exit", closeHandler);
         this.handlers.put("close", closeHandler);
         this.handlers.put("stop", closeHandler);
 
-        this.handlers.put("history", new Handler()
-        {
-            @Override
-            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole
-            {
-                if (args.isEmpty())
-                {
-                    for (String command : history)
-                    {
-                        System.out.println(command);
-                    }
-                }
-                else
-                {
-                    int to = Integer.parseInt(args.get(0));
+        ////////////////////////////////////
+        // Setting the "history" handler  //
+        ////////////////////////////////////
+        this.handlers.put("history", new HistoryHandler(this.history));
 
-                    for (int i = 0; i < to; ++i)
-                    {
-                        System.out.println(history.get(i));
-                    }
-                }
-            }
-        });
+        ////////////////////////////////////
+        // Setting the "gui" handler      //
+        ////////////////////////////////////
+        this.handlers.put("gui", new GuiHandler());
 
-        this.handlers.put("gui", new Handler()
-        {
-            @Override
-            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
-            {
-                Server.server.startGui();
-            }
-        });
-
-        this.handlers.put("connected", new Handler()
-        {
-            @Override
-            public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
-            {
-                Client[] clients = server.getConnectedClients();
-
-                if (clients.length == 1)
-                {
-                    System.out.println("There is only one client connected: ");
-                    System.out.println("> " + clients[0].getUsername() + " (" + clients[0].getAddress() + ")");
-                }
-                else if (clients.length == 0)
-                {
-                    System.out.println("There are 0 clients connected");
-                }
-                else
-                {
-                    System.out.println("There are " + clients.length + " clients connected: ");
-                    for (Client c : clients)
-                    {
-                        System.out.println("> " + c.getUsername() + " (" + c.getAddress() + ")");
-                    }
-                }
-            }
-        });
+        ////////////////////////////////////
+        // Setting the "connected"        //
+        // handler                        //
+        ////////////////////////////////////
+        this.handlers.put("connected", new ConnectedHandler());
     }
 
     /**

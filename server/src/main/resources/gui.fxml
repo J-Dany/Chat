@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -16,13 +14,6 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="480.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chat.gui.GuiController">
-   <top>
-      <MenuBar style="-fx-background-color: #62727b;" BorderPane.alignment="CENTER">
-         <menus>
-            <Menu mnemonicParsing="false" text="?" />
-         </menus>
-      </MenuBar>
-   </top>
    <center>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="436.0" prefWidth="780.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -81,4 +72,21 @@
          </padding>
       </HBox>
    </bottom>
+   <top>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #37474f;" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onMouseClicked="#handleClickOnInfo" style="-fx-background-color: #37474f;" text="Info" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </padding>
+      </HBox>
+   </top>
 </BorderPane>

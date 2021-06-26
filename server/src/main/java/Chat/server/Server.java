@@ -37,7 +37,7 @@ public class Server extends Thread
     /**
      * A constant indicating the max number
      * of message that this client can send
-     * whitin a minute before being muted
+     * within a minute before being muted
      * (used for preventing spam)
      */
     public static final int MAX_MESSAGE_BEFORE_MUTE = Integer.parseInt(Dotenv.load().get("MAX_MESSAGE_BEFORE_MUTE"));
@@ -49,7 +49,7 @@ public class Server extends Thread
     public static final int MAX_MESSAGE_BEFORE_BAN = Integer.parseInt(Dotenv.load().get("MAX_MESSAGE_BEFORE_BAN"));
 
     /**
-     * Reference to be used by ClientConnection
+     * Reference to the instance of the server
      */
     public static Server server = null;
 

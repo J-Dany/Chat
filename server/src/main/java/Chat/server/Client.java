@@ -111,7 +111,7 @@ public class Client
     }
 
     /**
-     * This metod sends the message to
+     * This method sends the message to
      * this client
      * 
      * @param msg the message to sent
@@ -126,7 +126,7 @@ public class Client
     }
 
     /**
-     * This metod sends the message to
+     * This method sends the message to
      * this client.
      * 
      * USE ONLY FOR CONNECTION
@@ -283,7 +283,7 @@ public class Client
     }
 
     /**
-     * Blocking method, returing the red message
+     * Blocking method, returning the red message
      * 
      * @return red message
      * @throws Exception
@@ -308,7 +308,7 @@ public class Client
     /**
      * Used to retrieve the message counter
      * of this client. The server will use this
-     * metod to determine if can send, or mute or 
+     * method to determine if can send, or mute or 
      * ban this client
      */
     public int getMessageCounter()
