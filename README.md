@@ -6,7 +6,7 @@ The client for this server can be found [here](https://github.com/J-Dany/ChatCli
 ## Index
 - [Dependencies](#dependencies)
 - [Configuration](#configuration)
-- [Installation](#installation)
+- [Build](#build)
 - [Execution](#execution)
 
 ## Dependencies
@@ -29,7 +29,7 @@ The parameters you can configure are the following:
     - **DB_PASSWD**: the password of **DB_USER**
     - **DB_HOST**: socket (IP:port) of the database server
 
-## Installation
+## Build
 In order to build the entire application, you need to run the followind command:
 ```bash
 ./gradlew build
