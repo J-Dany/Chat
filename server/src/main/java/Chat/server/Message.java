@@ -39,6 +39,14 @@ public class Message
     }
 
     /**
+     * Types of message content
+     */
+    public enum TypeOfContent {
+        PLAIN,
+        CODE
+    }
+
+    /**
      * Default constructor
      * @param webSocketMessage the message received from the socket
      * @throws Exception
@@ -63,6 +71,22 @@ public class Message
         }
 
         return TypeOfMessage.valueOf(json.getString("Type"));
+    }
+
+    /**
+     * Get types of content
+     * 
+     * @return TypeOfMessage
+     * @throws FieldNotFound
+     */
+    public TypeOfContent getTypeOfContent() throws FieldNotFound
+    {
+        if (!json.has("Content"))
+        {
+            throw new FieldNotFound("Content");
+        }
+
+        return TypeOfContent.valueOf(json.getString("Content"));
     }
 
     /**
@@ -269,11 +293,12 @@ public class Message
      * @param hM the hour and the minute when the client sent the message
      * @return String
      */
-    public static String privateMessage(String sender, String message, String hM)
+    public static String privateMessage(String sender, String message, String hM, TypeOfContent contentType)
     {
         JSONObject json = new JSONObject();
 
         json.put("Type", TypeOfMessage.FOR_PRIVATE);
+        json.put("Content", contentType);
         json.put("Sender", sender);
         json.put("Message", message);
         json.put("Data", hM);

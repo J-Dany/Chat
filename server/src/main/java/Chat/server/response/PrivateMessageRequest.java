@@ -54,7 +54,14 @@ public class PrivateMessageRequest implements Request
 
         logger.addMsg(LogMessage.info("Sending message => " + client.getUsername() + " -> " + msg.getAddresse()));
 
-        client.sendToFriend(msg.getAddresse(), Message.privateMessage(client.getUsername(), msg.getMessage(), msg.getHM()));
+        client.sendToFriend(
+            msg.getAddresse(), 
+            Message.privateMessage(
+                client.getUsername(),
+                msg.getMessage(),
+                msg.getHM(),
+                msg.getTypeOfContent()
+        ));
 
         return RequestReturnValues.PRIVATE_MESSAGE;
     }

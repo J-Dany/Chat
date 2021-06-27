@@ -1,6 +1,8 @@
 package Chat.gui;
 
 import java.util.HashMap;
+
+import Chat.server.Server;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +19,7 @@ import javafx.stage.Stage;
  * @author Daniele Castiglia
  * @version 1.0.0
  */
-public class GuiController 
+public class GuiController
 {
     /**
      * The binding from client's name and
@@ -44,6 +46,19 @@ public class GuiController
     void handleClicked(MouseEvent event)
     {
         Platform.exit();
+    }
+
+    @FXML
+    void handleClickStopServer(MouseEvent event) 
+    {
+        try
+        {
+            Server.server.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @FXML

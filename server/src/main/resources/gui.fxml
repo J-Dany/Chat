@@ -43,7 +43,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
                <graphic>
-                  <Label text="Stop server" textFill="#f44336">
+                  <Label onMouseClicked="#handleClickStopServer" text="Stop server" textFill="#f44336">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
