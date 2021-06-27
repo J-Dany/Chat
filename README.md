@@ -34,7 +34,7 @@ In order to build the entire application, you need to run the followind command:
 ```bash
 ./gradlew build
 ```
-This will create a directory inside ```server```, called ```build```. Inside ```server/build/libs``` there is the jar file that you can execute to run That!. Here the command for running the jar (currently That! has no GUI, so you need to run it in the terminal):
+This will create a directory inside ```server```, called ```build```. Inside ```server/build/libs``` there is the jar file that you can execute to run That!. Here the command for running the jar:
 ```bash
 java -jar server.jar
 ```
