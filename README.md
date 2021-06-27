@@ -40,7 +40,7 @@ java -jar server.jar
 ```
 
 ## Execution
-When you run the application, you have access to a sort of "console". In fact, once the app has started, print out ```?```:
+When you run the application, you have access to a sort of "console". In fact, once the app has started, it prints out ```?```:
 
 ![that_console](images/that_console.PNG)
 
