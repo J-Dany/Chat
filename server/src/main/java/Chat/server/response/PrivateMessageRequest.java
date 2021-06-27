@@ -38,10 +38,10 @@ public class PrivateMessageRequest implements Request
             {
                 addresseId = result.getInt("id_user");
             }
-            else
-            {
-                addresseId = Server.server.getClient(msg.getAddresse()).getId();
-            }
+        }
+        else
+        {
+            addresseId = Server.server.getClient(msg.getAddresse()).getId();
         }
 
         statement.setString(1, msg.getData());
