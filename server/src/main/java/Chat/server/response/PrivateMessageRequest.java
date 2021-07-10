@@ -8,9 +8,10 @@ import java.sql.Types;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.server.Client;
-import Chat.server.Message;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
+import Chat.server.message.info.PrivateMessageBuilder;
+import Chat.server.message.request.PrivateMessageRequestMessage;
 
 /**
  * @author Daniele Castiglia
@@ -18,8 +19,15 @@ import Chat.server.database.DatabaseConnection;
  */
 public class PrivateMessageRequest implements Request
 {
+    private PrivateMessageRequestMessage req;
+
+    public PrivateMessageRequest(PrivateMessageRequestMessage req)
+    {
+        this.req = req;
+    }
+
     @Override
-    public RequestReturnValues handle(Message msg, Client client, Logger logger) throws Exception 
+    public RequestReturnValues handle(Client client, Logger logger) throws Exception 
     {
         Connection connection = DatabaseConnection.getConnection();
 
@@ -27,9 +35,9 @@ public class PrivateMessageRequest implements Request
         + " VALUES (?, ?, ?, ?, ?);");
 
         int addresseId = 0;
-        if (Server.server.getClient(msg.getAddresse()) == null)
+        if (Server.server.getClient(req.getAddresse()) == null)
         {
-            String query = "SELECT id_user FROM users WHERE username = '" + msg.getAddresse() + "';";
+            String query = "SELECT id_user FROM users WHERE username = '" + req.getAddresse() + "';";
 
             Statement stmt = connection.createStatement();
             ResultSet result = stmt.executeQuery(query);
@@ -41,27 +49,28 @@ public class PrivateMessageRequest implements Request
         }
         else
         {
-            addresseId = Server.server.getClient(msg.getAddresse()).getId();
+            addresseId = Server.server.getClient(req.getAddresse()).getId();
         }
 
-        statement.setString(1, msg.getData());
-        statement.setString(2, msg.getMessage());
+        statement.setString(1, req.getData());
+        statement.setString(2, req.getMessage());
         statement.setNull(3, Types.NULL);
         statement.setInt(4, client.getId());
         statement.setInt(5, addresseId);
 
         statement.executeUpdate();
 
-        logger.addMsg(LogMessage.info("Sending message => " + client.getUsername() + " -> " + msg.getAddresse()));
+        logger.addMsg(LogMessage.info("Sending message => " + client.getUsername() + " -> " + req.getAddresse()));
 
         client.sendToFriend(
-            msg.getAddresse(), 
-            Message.privateMessage(
-                client.getUsername(),
-                msg.getMessage(),
-                msg.getHM(),
-                msg.getTypeOfContent()
-        ));
+            req.getAddresse(),
+            new PrivateMessageBuilder()
+                .setSender(client.getUsername())
+                .setMessage(req.getMessage())
+                .setHM(req.getHM())
+                .setContent(req.getContent())
+                .build()
+        );
 
         return RequestReturnValues.PRIVATE_MESSAGE;
     }

@@ -3,44 +3,45 @@ package Chat.server;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
+import com.google.gson.Gson;
+
+import Chat.server.message.Message;
 
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.1.2
+ * @version 1.2.0
  */
 public class WebSocketMessage 
 {
     private byte[] encodedData;
     private String decoded;
 
-    private String message;
+    private Message message;
     private long encodeMessageSize;
     private ByteBuffer encodedMessage;
 
-    public WebSocketMessage(byte[] data) throws Exception 
+    public WebSocketMessage(byte[] data) throws Exception
     {
         this.encodedData = Arrays.copyOf(data, data.length);
     }
 
-    public WebSocketMessage(String msg) throws UnsupportedEncodingException
+    public WebSocketMessage(Message msg) throws UnsupportedEncodingException
     {
-        byte[] bytes = msg.getBytes(Charset.forName("UTF-8"));
-        this.message = new String(bytes, 0, bytes.length, "UTF-8");
+        this.message = msg;
         this.encodedMessage = ByteBuffer.allocate(4096);
     }
 
     private void encodeMessage() throws IOException
     {
-        byte[] messageByte = message.getBytes();
-
         byte firstByte = (byte) 0x81; // 129
 
         this.encodedMessage.put(firstByte);
 
-        long messageSize = message.length();
+        byte[] messageByte = new Gson().toJson(this.message).toString().getBytes();
+
+        long messageSize = messageByte.length;
         this.encodeMessageSize = messageSize;
 
         if (messageSize <= 125)
@@ -56,7 +57,7 @@ public class WebSocketMessage
             this.encodedMessage.put((byte) 126);
             this.encodedMessage.put(size);
         } 
-        else 
+        else
         {
             byte[] size = ByteBuffer.allocate(8).putLong(messageSize).array();
 
@@ -64,7 +65,7 @@ public class WebSocketMessage
             this.encodedMessage.put(size);
         }
 
-        for (int j = 0; j < messageByte.length; ++j) 
+        for (int j = 0; j < messageSize; ++j) 
         {
             this.encodedMessage.put(messageByte[j]);
         }
@@ -105,21 +106,13 @@ public class WebSocketMessage
         switch (length) 
         {
             case 127:
-                realLength |= this.encodedData[2] < 0 ? 128 - (-this.encodedData[2]) : this.encodedData[2];
-                realLength <<= 8;
-                realLength |= this.encodedData[3] < 0 ? 128 - (-this.encodedData[3]) : this.encodedData[3];
-                realLength <<= 8;
-                realLength |= this.encodedData[4] < 0 ? 128 - (-this.encodedData[4]) : this.encodedData[4];
-                realLength <<= 8;
-                realLength |= this.encodedData[5] < 0 ? 128 - (-this.encodedData[5]) : this.encodedData[5];
-                realLength <<= 8;
-                realLength |= this.encodedData[6] < 0 ? 128 - (-this.encodedData[6]) : this.encodedData[6];
-                realLength <<= 8;
-                realLength |= this.encodedData[7] < 0 ? 128 - (-this.encodedData[7]) : this.encodedData[7];
-                realLength <<= 8;
-                realLength |= this.encodedData[8] < 0 ? 128 - (-this.encodedData[8]) : this.encodedData[8];
-                realLength <<= 8;
-                realLength |= this.encodedData[9] < 0 ? 128 - (-this.encodedData[9]) : this.encodedData[9];
+
+                for (int i = 2; i != 9; ++i)
+                {
+                    realLength |= this.encodedData[i] < 0 ? 128 - (-this.encodedData[i]) : this.encodedData[i];
+                    realLength <<= 8;
+                }
+
                 indexFirstMask = 10;
                 realLength += length + 8;
                 break;
@@ -156,7 +149,7 @@ public class WebSocketMessage
         return this.decoded;
     }
 
-    public byte[] getRawData() 
+    public byte[] getRawData()
     {
         return this.encodedData;
     }

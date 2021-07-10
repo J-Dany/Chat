@@ -1,14 +1,17 @@
 package Chat.server.response;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Base64;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.server.Client;
-import Chat.server.Message;
-import Chat.server.database.DatabaseTable;
+import Chat.server.database.DatabaseConnection;
+import Chat.server.message.info.LoginMessage;
+import Chat.server.message.request.LoginRequestMessage;
 
 /**
  * @author Daniele Castiglia
@@ -16,12 +19,23 @@ import Chat.server.database.DatabaseTable;
  */
 public class LoginRequest implements Request
 {
-    @Override
-    public RequestReturnValues handle(Message msg, Client client, Logger logger) throws Exception 
+    LoginRequestMessage req;
+
+    public LoginRequest(LoginRequestMessage req)
     {
-        DatabaseTable userTable = new DatabaseTable("users", "username");
-        
-        ResultSet result = userTable.findOneBy(msg.getSender());
+        this.req = req;
+    }
+
+    @Override
+    public RequestReturnValues handle(Client client, Logger logger) throws Exception 
+    {        
+        Connection connection = DatabaseConnection.getConnection();
+
+        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+        String query = "SELECT * FROM users WHERE username = '" + req.getUsername() + "';";
+
+        ResultSet result = stmt.executeQuery(query);
 
         logger.addMsg(LogMessage.ok("Database interrogated for " + client.getAddress()));
 
@@ -34,21 +48,22 @@ public class LoginRequest implements Request
         }
 
         String password = Base64.getEncoder().encodeToString(
-            Hashing.sha256().hashString(msg.getPassword(), Charsets.UTF_8).asBytes()
+            Hashing.sha256().hashString(req.getPassword(), Charsets.UTF_8).asBytes()
         );
 
         if (result.next() && num_rows == 1
             &&
-            result.getString("username").equals(msg.getSender()) && result.getString("password").equals(password)
+            result.getString("username").equals(req.getUsername()) && result.getString("password").equals(password)
         )
         {
             client.setId(result.getInt("id_user"));
-            client.setUsername(msg.getSender());
-            client.sendMessage(Message.login(true, result.getInt("id_user")));
+            client.setUsername(req.getUsername());
+            client.sendMessage(new LoginMessage(true, result.getInt("id_user")));
+
             return RequestReturnValues.LOGIN_OK;
         }
         
-        client.sendMessage(Message.login(false));
+        client.sendMessage(new LoginMessage(false, -1));
         return RequestReturnValues.LOGIN_FAILED;
     }
 }

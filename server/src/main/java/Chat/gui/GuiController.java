@@ -1,7 +1,6 @@
 package Chat.gui;
 
 import java.util.HashMap;
-
 import Chat.server.Server;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -62,7 +61,7 @@ public class GuiController
     }
 
     @FXML
-    void handleClickOnInfo(MouseEvent event) 
+    void handleClickOnInfo(MouseEvent event)
     {
         System.out.println("Salve");
         try

@@ -1,12 +1,12 @@
-package Chat.server.exceptions;
+package Chat.server.exception;
 
 /**
  * @author Daniele Castiglia
  * @version 1.0.0
  */
-public class FieldNotFound extends Exception
+public class FieldNotFoundException extends Exception
 {
-    public FieldNotFound(String field)
+    public FieldNotFoundException(String field)
     {
         super("This message does not contain '" + field + "' field");
     }

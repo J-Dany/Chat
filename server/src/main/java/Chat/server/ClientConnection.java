@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import java.util.Base64;
 import Chat.LogMessage;
 import Chat.Logger;
-import Chat.server.exceptions.CloseConnection;
+import Chat.server.exception.CloseConnectionException;
 import Chat.server.response.Request;
 import Chat.server.response.RequestFactory;
 
@@ -58,7 +58,7 @@ public class ClientConnection implements Runnable
                 
                 logger.addMsg(LogMessage.ok("Message received from " + this.client.getAddress()));
 
-                Message msg = null;
+                ClientMessage msg = null;
 
                 ////////////////////////////////////
                 // Try to read the message, if    //
@@ -68,7 +68,7 @@ public class ClientConnection implements Runnable
                 ////////////////////////////////////
                 try
                 {
-                    msg = new Message(new WebSocketMessage(buffer));
+                    msg = new ClientMessage(new WebSocketMessage(buffer));
                 }
                 catch (Exception e)
                 {
@@ -80,23 +80,23 @@ public class ClientConnection implements Runnable
                 // Instantiating the response for //
                 // the request                    //
                 ////////////////////////////////////
-                Request request = RequestFactory.getResponse(msg.getTypeOfMessage());
+                Request request = RequestFactory.getResponse(msg.getTypeOfMessage(), msg.getRawString());
 
                 this.logger.addMsg(LogMessage.info("Handler instantiated " + this.client.getAddress() + ": " + request.getClass().getName()));
 
                 ////////////////////////////////////
                 // Handle the request             //
                 ////////////////////////////////////
-                switch (request.handle(msg, this.client, this.logger))
+                switch (request.handle(this.client, this.logger))
                 {
                     case LOGIN_FAILED:
-                        logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
+                        logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress()));
                         return;
                     case LOGIN_OK:
                         Server.server.addNewConnectedClient(client.getUsername(), client);
                         client.sendListOfFriend();
                         client.notifyOnlineToFriend();
-                        logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + msg.getSender() + ")"));
+                        logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
                     break;
                     case PRIVATE_MESSAGE:
                         logger.addMsg(LogMessage.ok("Message sent"));
@@ -105,7 +105,7 @@ public class ClientConnection implements Runnable
                         logger.addMsg(LogMessage.info("Can't send message because the friend is offline"));
                     break;
                     case CLOSE_CONNECTION:
-                        throw new CloseConnection(client.getUsername());
+                        throw new CloseConnectionException(client.getUsername());
                 }
             }
             ////////////////////////////////////
@@ -113,7 +113,7 @@ public class ClientConnection implements Runnable
             // connection                     //
             // (THIS IS NOT AN ERROR)         //
             ////////////////////////////////////
-            catch (CloseConnection e)
+            catch (CloseConnectionException e)
             {
                 logger.addMsg(LogMessage.info(e.toString()));
                 break;

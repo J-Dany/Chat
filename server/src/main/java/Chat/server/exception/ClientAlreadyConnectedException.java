@@ -1,12 +1,12 @@
-package Chat.server.exceptions;
+package Chat.server.exception;
 
 /**
  * @author Daniele Castiglia
  * @version 1.0.0
  */
-public class ClientAlreadyConnected extends Exception
+public class ClientAlreadyConnectedException extends Exception
 {
-    public ClientAlreadyConnected(String username, String ip)
+    public ClientAlreadyConnectedException(String username, String ip)
     {
         super("The client with the following username, '" + username + "', is already connected (" + ip + ")");
     }

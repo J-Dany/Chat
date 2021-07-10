@@ -10,9 +10,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.json.JSONObject;
 import Chat.server.database.*;
-import Chat.server.exceptions.FriendNotFound;
+import Chat.server.exception.FriendNotFoundException;
+import Chat.server.message.Message;
+import Chat.server.message.info.DisconnectionMessage;
+import Chat.server.message.info.ListOfFriendMessage;
+import Chat.server.message.info.NewConnectionMessage;
+import Chat.server.pojo.Friend;
 
 /**
  * Class that represent a Client
@@ -117,7 +121,7 @@ public class Client
      * @param msg the message to sent
      * @throws IOException
      */
-    public void sendMessage(String msg) throws IOException
+    public void sendMessage(Message msg) throws IOException
     {
         WebSocketMessage wbm = new WebSocketMessage(msg);
 
@@ -165,7 +169,7 @@ public class Client
             {
                 Client friend = Server.server.getClient(result.getString("friend"));
 
-                friend.sendMessage(Message.disconnection(this.username));
+                friend.sendMessage(new DisconnectionMessage(this.username));
             }
         }
     }
@@ -194,7 +198,7 @@ public class Client
             {
                 Client friend = Server.server.getClient(result.getString("friend"));
 
-                friend.sendMessage(Message.newConnection(this.username));
+                friend.sendMessage(new NewConnectionMessage(this.username));
             }
         }
     }
@@ -205,10 +209,10 @@ public class Client
      * @param friend friend of this client
      * @param msg the message
      * @throws SQLException
-     * @throws FriendNotFound
+     * @throws FriendNotFoundException
      * @throws IOException
      */
-    public void sendToFriend(String friend, String msg) throws SQLException, FriendNotFound, IOException
+    public void sendToFriend(String friend, Message msg) throws SQLException, FriendNotFoundException, IOException
     {
         if (!Server.server.isOnline(friend))
         {
@@ -235,7 +239,7 @@ public class Client
             return;
         }
 
-        throw new FriendNotFound(this.username, friend);
+        throw new FriendNotFoundException(this.username, friend);
     }
 
     /**
@@ -243,7 +247,7 @@ public class Client
      */
     public void sendListOfFriend() throws SQLException, IOException
     {
-        ArrayList<JSONObject> friends = new ArrayList<>();
+        ArrayList<Friend> friends = new ArrayList<>();
 
         Connection connection = DatabaseConnection.getConnection();
 
@@ -258,28 +262,27 @@ public class Client
 
         while (result.next())
         {
-            JSONObject json = new JSONObject();
-
             String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + 
             " OR sender = " + result.getInt("friend_id") + " AND addresse = " + this.id + 
             " ORDER BY data DESC LIMIT 1;";
 
             ResultSet result1 = stmt1.executeQuery(query1);
 
-            json.put("Name", result.getString("friend"));
-            json.put("IdFriend", result.getInt("friend_id"));
-            json.put("Online", Server.server.isOnline(result.getString("friend")));
-            json.put("Photo", result.getString("photo"));
+            Friend f = new Friend();
+            f.setName(result.getString("friend"));
+            f.setIdFriend(result.getInt("friend_id"));
+            f.setOnline(Server.server.isOnline(result.getString("friend")));
+            f.setPhoto(result.getString("photo"));
 
             if (result1.next())
             {
-                json.put("LastMessage", result1.getString("message"));
+                f.setLastMessage(result1.getString("message"));
             }
 
-            friends.add(json);
+            friends.add(f);
         }
 
-        this.sendMessage(Message.listOfFriend(friends));
+        this.sendMessage(new ListOfFriendMessage(friends));
     }
 
     /**

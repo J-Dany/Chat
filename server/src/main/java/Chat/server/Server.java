@@ -11,7 +11,8 @@ import Chat.LogMessage;
 import Chat.Logger;
 import Chat.console.Console;
 import Chat.gui.ServerGUI;
-import Chat.server.exceptions.ClientAlreadyConnected;
+import Chat.server.exception.ClientAlreadyConnectedException;
+import Chat.server.message.info.ClosingServerMessage;
 import io.github.cdimascio.dotenv.*;
 
 /**
@@ -221,28 +222,6 @@ public class Server extends Thread
     }
 
     /**
-     * Send a message to every client connected
-     * 
-     * @param msg
-     */
-    public void broadcastMessage(String msg)
-    {
-        this.connected.forEach((username, client) -> {
-            try
-            {
-                if (isOnline(username))
-                {
-                    client.sendMessage(msg);
-                }                
-            }
-            catch (Exception e)
-            {
-                logger.addMsg(LogMessage.error(e.toString()));
-            }
-        });
-    }
-
-    /**
      * Starts the graphical interface
      */
     public void startGui()
@@ -268,13 +247,13 @@ public class Server extends Thread
      * 
      * @param username the username of authenticated client
      * @param client the reference to the client created when he connected
-     * @throws ClientAlreadyConnected
+     * @throws ClientAlreadyConnectedException
      */
-    public void addNewConnectedClient(String username, Client client) throws ClientAlreadyConnected
+    public void addNewConnectedClient(String username, Client client) throws ClientAlreadyConnectedException
     {
         if (this.connected.containsKey(username))
         {
-            throw new ClientAlreadyConnected(username, this.connected.get(username).getAddress().toString());
+            throw new ClientAlreadyConnectedException(username, this.connected.get(username).getAddress().toString());
         }
         
         this.connected.put(username, client);
@@ -333,14 +312,17 @@ public class Server extends Thread
 
         for (Client c : this.connected.values())
         {
-            c.sendMessage(Message.closingServer());
+            c.sendMessage(new ClosingServerMessage());
             c.closeConnection();
         }
 
         this.threadPool.shutdown();
+
         this.socket.close();
+        
         this.interrupt();
+        
         this.console.interrupt();
-        this.console.join();
+        this.console.join(500);
     }
 }

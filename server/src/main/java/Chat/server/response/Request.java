@@ -2,7 +2,7 @@ package Chat.server.response;
 
 import Chat.Logger;
 import Chat.server.Client;
-import Chat.server.Message;
+import Chat.server.ClientMessage;
 
 /**
  * @author Daniele Castiglia
@@ -26,5 +26,5 @@ public interface Request
      * @param logger the server logger
      * @throws Exception
      */
-    public RequestReturnValues handle(Message msg, Client client, Logger logger) throws Exception;
+    public RequestReturnValues handle(Client client, Logger logger) throws Exception;
 }
