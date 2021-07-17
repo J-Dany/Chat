@@ -13,6 +13,8 @@ public class Friend
     private String Name;
     private String Photo;
     private String LastMessage;
+    private String Content;
+    private String Language;
     private int IdFriend;
     private boolean Online;
 
@@ -48,6 +50,24 @@ public class Friend
         this.LastMessage = LastMessage;
     }
 
+    public String getContent() {
+        return this.Content;
+    }
+
+    public void setContent(String Content) 
+    {
+        this.Content = Content;
+    }
+
+    public String getLanguage() {
+        return this.Language;
+    }
+
+    public void setLanguage(String Language) 
+    {
+        this.Language = Language;
+    }
+
     public int getIdFriend() 
     {
         return this.IdFriend;
@@ -66,5 +86,5 @@ public class Friend
     public void setOnline(boolean Online) 
     {
         this.Online = Online;
-    }    
+    }   
 }

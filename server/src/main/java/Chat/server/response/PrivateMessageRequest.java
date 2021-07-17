@@ -31,8 +31,8 @@ public class PrivateMessageRequest implements Request
     {
         Connection connection = DatabaseConnection.getConnection();
 
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO messages(data, message, id_group, sender, addresse)"
-        + " VALUES (?, ?, ?, ?, ?);");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO messages(data, message, id_group, sender, addresse, content_type, language)"
+        + " VALUES (?, ?, ?, ?, ?, ?, ?);");
 
         int addresseId = 0;
         if (Server.server.getClient(req.getAddresse()) == null)
@@ -57,6 +57,8 @@ public class PrivateMessageRequest implements Request
         statement.setNull(3, Types.NULL);
         statement.setInt(4, client.getId());
         statement.setInt(5, addresseId);
+        statement.setString(6, req.getContent());
+        statement.setString(7, req.getLanguage());
 
         statement.executeUpdate();
 
@@ -69,6 +71,7 @@ public class PrivateMessageRequest implements Request
                 .setMessage(req.getMessage())
                 .setHM(req.getHM())
                 .setContent(req.getContent())
+                .setLanguage(req.getLanguage())
                 .build()
         );
 

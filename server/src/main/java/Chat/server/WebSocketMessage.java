@@ -11,9 +11,9 @@ import Chat.server.message.Message;
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.2.0
+ * @version 1.2.1
  */
-public class WebSocketMessage 
+public class WebSocketMessage
 {
     private byte[] encodedData;
     private String decoded;
@@ -24,7 +24,7 @@ public class WebSocketMessage
 
     public WebSocketMessage(byte[] data) throws Exception
     {
-        this.encodedData = Arrays.copyOf(data, data.length);
+        this.encodedData = Arrays.copyOf(data, data.length + 1);
     }
 
     public WebSocketMessage(Message msg) throws UnsupportedEncodingException

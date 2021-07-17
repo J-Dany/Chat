@@ -33,6 +33,8 @@ CREATE TABLE messages(
 	`id_group` INT,
 	`sender` INT NOT NULL,
 	`addresse` INT,
+	`content_type` ENUM("PLAIN", "CODE") NOT NULL,
+	`language` VARCHAR(255),
 	CONSTRAINT `fk_messagesGroups` FOREIGN KEY (`id_group`) REFERENCES `crowds`(`id_group`),
 	CONSTRAINT `fk_messagesUsersSender` FOREIGN KEY (`sender`) REFERENCES `users`(`id_user`),
 	CONSTRAINT `fk_messagesUsersAddresse` FOREIGN KEY (addresse) REFERENCES `users`(`id_user`)

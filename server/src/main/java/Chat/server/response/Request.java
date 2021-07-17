@@ -2,7 +2,6 @@ package Chat.server.response;
 
 import Chat.Logger;
 import Chat.server.Client;
-import Chat.server.ClientMessage;
 
 /**
  * @author Daniele Castiglia

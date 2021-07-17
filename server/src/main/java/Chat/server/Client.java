@@ -277,6 +277,8 @@ public class Client
             if (result1.next())
             {
                 f.setLastMessage(result1.getString("message"));
+                f.setContent(result1.getString("content"));
+                f.setLanguage(result1.getString("language"));
             }
 
             friends.add(f);

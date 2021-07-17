@@ -1,15 +1,15 @@
 package Chat.server.message.request;
 
-import Chat.server.ClientMessage.TypeOfContent;
 import Chat.server.message.Message;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class PrivateMessageRequestMessage extends Message
 {
-    private TypeOfContent Content;
+    private String Content;
+    private String Language;
     private String Message;
     private String Addresse;
     private String HM;
@@ -17,14 +17,24 @@ public class PrivateMessageRequestMessage extends Message
 
     public PrivateMessageRequestMessage() { }
 
-    public TypeOfContent getContent() 
+    public String getContent() 
     {
         return this.Content;
     }
 
-    public void setContent(TypeOfContent Content) 
+    public void setContent(String Content) 
     {
         this.Content = Content;
+    }
+
+    public String getLanguage() 
+    {
+        return this.Language;
+    }
+
+    public void setLanguage(String Language) 
+    {
+        this.Language = Language;
     }
 
     public String getMessage() 
@@ -47,8 +57,7 @@ public class PrivateMessageRequestMessage extends Message
         this.Addresse = Addresse;
     }
 
-    public String getHM() 
-    {
+    public String getHM() {
         return this.HM;
     }
 
@@ -57,8 +66,7 @@ public class PrivateMessageRequestMessage extends Message
         this.HM = HM;
     }
 
-    public String getData() 
-    {
+    public String getData() {
         return this.Data;
     }
 
@@ -66,5 +74,4 @@ public class PrivateMessageRequestMessage extends Message
     {
         this.Data = Data;
     }
-
 }

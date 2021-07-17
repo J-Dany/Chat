@@ -166,7 +166,7 @@ public class Server extends Thread
                 
                 this.logger.addMsg(LogMessage.ok("Connection accepted for " + s.getInetAddress()));
 
-                this.threadPool.submit(new ClientConnection(new Client(s, s.getInetAddress()), this.logger));
+                this.threadPool.submit(new Session(new Client(s, s.getInetAddress()), this.logger));
             }
             catch (Exception e)
             {

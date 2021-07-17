@@ -15,7 +15,7 @@ import Chat.server.response.RequestFactory;
  * @author Daniele Castiglia
  * @version 1.0.2
  */
-public class ClientConnection implements Runnable
+public class Session implements Runnable
 {
     /**
      * Reference to the client
@@ -31,7 +31,7 @@ public class ClientConnection implements Runnable
      * Constructor
      * @param c the client that this connection will handle
      */
-    public ClientConnection(Client c, Logger log)
+    public Session(Client c, Logger log)
     {
         this.client = c;
         this.logger = log;
