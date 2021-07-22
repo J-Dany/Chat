@@ -20,7 +20,7 @@ import io.github.cdimascio.dotenv.*;
  * and connection will be processed
  * 
  * @author Daniele Castiglia
- * @version 1.3.0
+ * @version 1.4.0
  */
 public class Server extends Thread
 {
@@ -36,31 +36,9 @@ public class Server extends Thread
     private final int THREAD_POOL_SIZE = Integer.parseInt(Dotenv.load().get("MAX_USERS"));
 
     /**
-     * A constant indicating the max number
-     * of message that this client can send
-     * within a minute before being muted
-     * (used for preventing spam)
-     */
-    public static final int MAX_MESSAGE_BEFORE_MUTE = Integer.parseInt(Dotenv.load().get("MAX_MESSAGE_BEFORE_MUTE"));
-    
-    /**
-     * Same as MAX_MESSAGE_BEFORE_MUTE, but this
-     * time it refers to BAN
-     */
-    public static final int MAX_MESSAGE_BEFORE_BAN = Integer.parseInt(Dotenv.load().get("MAX_MESSAGE_BEFORE_BAN"));
-
-    /**
      * Reference to the instance of the server
      */
     public static Server server = null;
-
-    /**
-     * An HashMap containing all banned
-     * client. The string param refers to
-     * username, while the client param refers
-     * to the object
-     */
-    private HashMap<String, Client> banned;
 
     /**
      * The graphical interface for the
@@ -112,7 +90,6 @@ public class Server extends Thread
     {
         this.setName("Server");
         this.socket = new ServerSocket(port);
-        this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
@@ -131,7 +108,6 @@ public class Server extends Thread
     {
         this.setName("Server");
         this.socket = new ServerSocket(this.PORT);
-        this.banned = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(this.THREAD_POOL_SIZE);
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
@@ -158,15 +134,23 @@ public class Server extends Thread
             try
             {
                 this.logger.addMsg(LogMessage.info("Listening for incoming connection"));
-                
+
                 ////////////////////////////////////
                 // Accepts connections            //
                 ////////////////////////////////////
                 Socket s = this.socket.accept();
-                
+
+                if (this.connected.size() >= THREAD_POOL_SIZE)
+                {
+                    this.logger.addMsg(LogMessage.ok("Connection refused for " + s.getInetAddress() + "(reached the maximum connection)"));
+                    s.close();
+
+                    continue;
+                }
+
                 this.logger.addMsg(LogMessage.ok("Connection accepted for " + s.getInetAddress()));
 
-                this.threadPool.submit(new Session(new Client(s, s.getInetAddress()), this.logger));
+                this.threadPool.submit(new Session(new Client(s), this.logger));
             }
             catch (Exception e)
             {
@@ -208,7 +192,8 @@ public class Server extends Thread
     }
 
     /**
-     * Upgrade logs for this instance
+     * Upgrade logs for this run
+     * 
      * @param msg
      */
     public void upgradeLogs(LogMessage msg)
@@ -219,6 +204,52 @@ public class Server extends Thread
         {
             this.gui.upgradeLogs(msg);
         }
+    }
+
+    /**
+     * Retrieve the last log message
+     * for this run
+     * 
+     * @return LogMessage
+     */
+    public LogMessage getLastLog()
+    {
+        if (this.logs.isEmpty())
+        {
+            return null;
+        }
+
+        return this.logs.get(this.logs.size() - 1);
+    }
+
+    /**
+     * Returns the number of logs for this run
+     * 
+     * @return int
+     */
+    public int logsSize()
+    {
+        return this.logs.size();
+    }
+
+    /**
+     * Returns a log message at specified index
+     * 
+     * @param index index of the log message
+     * @return LogMessage
+     */
+    public LogMessage getLogMessageAt(int index)
+    {
+        try
+        {
+            return this.logs.get(index);
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            this.logger.addMsg(LogMessage.error(e.toString()));
+        }
+
+        return null;
     }
 
     /**

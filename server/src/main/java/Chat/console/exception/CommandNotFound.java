@@ -1,4 +1,4 @@
-package Chat.console;
+package Chat.console.exception;
 
 /**
  * Represents the exception "command not found"

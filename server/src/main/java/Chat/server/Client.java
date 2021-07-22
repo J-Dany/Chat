@@ -22,7 +22,7 @@ import Chat.server.pojo.Friend;
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.3.4
+ * @version 1.4.0
  */
 public class Client 
 {
@@ -65,13 +65,13 @@ public class Client
     /**
      * Constructor
      * 
-     * @param address client's IP
+     * @param s socket of the connection
      * @throws IOException
      */
-    public Client(Socket s, InetAddress address) throws IOException
+    public Client(Socket s) throws IOException
     {
-        this.address = address;
         this.socket = s;
+        this.address = s.getInetAddress();
         this.writer = s.getOutputStream();
     }
 
@@ -277,7 +277,7 @@ public class Client
             if (result1.next())
             {
                 f.setLastMessage(result1.getString("message"));
-                f.setContent(result1.getString("content"));
+                f.setContent(result1.getString("content_type"));
                 f.setLanguage(result1.getString("language"));
             }
 

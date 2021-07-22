@@ -101,9 +101,6 @@ public class Session implements Runnable
                     case PRIVATE_MESSAGE:
                         logger.addMsg(LogMessage.ok("Message sent"));
                     break;
-                    case CANT_SEND_PRIVATE_MESSAGE_BECAUSE_OFFLINE:
-                        logger.addMsg(LogMessage.info("Can't send message because the friend is offline"));
-                    break;
                     case CLOSE_CONNECTION:
                         throw new CloseConnectionException(client.getUsername());
                 }

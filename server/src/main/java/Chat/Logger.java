@@ -8,14 +8,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import Chat.server.Server;
 
 /**
  * Class for logging messages
  * 
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Logger extends Thread
 {
@@ -48,8 +47,9 @@ public class Logger extends Thread
     public enum LoggerType
     {
         OK,
-        ER,
-        IN
+        ER, // ERROR
+        IN, // INFO
+        WA  // WARNING
     };
 
     public Logger(String path) throws FileNotFoundException, UnsupportedEncodingException, IOException

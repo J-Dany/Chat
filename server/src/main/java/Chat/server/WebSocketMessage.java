@@ -5,13 +5,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.google.gson.Gson;
-
 import Chat.server.message.Message;
 
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.2.1
+ * @version 1.2.2
  */
 public class WebSocketMessage
 {
@@ -97,51 +96,43 @@ public class WebSocketMessage
 
     public void decodeData() throws Exception 
     {
-        byte length = (byte) (this.encodedData[1] & 0x7f);
-        long realLength = 0;
+        ByteBuffer wrapped = ByteBuffer.wrap(this.encodedData);
+
+        // Ignore the first byte
+        wrapped.get();
+
+        byte length = (byte) (wrapped.get() & 0x7f);
 
         int indexFirstMask = 2;
         int[] keys = new int[4];
 
+        byte[] decoded;
+
         switch (length) 
         {
             case 127:
-
-                for (int i = 2; i != 9; ++i)
-                {
-                    realLength |= this.encodedData[i] < 0 ? 128 - (-this.encodedData[i]) : this.encodedData[i];
-                    realLength <<= 8;
-                }
-
+                decoded = new byte[(int) wrapped.getLong()];
                 indexFirstMask = 10;
-                realLength += length + 8;
                 break;
             case 126:
-                realLength |= this.encodedData[2] < 0 ? 128 - (-this.encodedData[2]) : this.encodedData[2];
-                realLength <<= 8;
-                realLength |= this.encodedData[3] < 0 ? 128 - (-this.encodedData[3]) : this.encodedData[3];
+                decoded = new byte[wrapped.getShort()];
                 indexFirstMask = 4;
-                realLength += length + 2;
                 break;
             default:
-                realLength = length;
+                decoded = new byte[length];
         }
 
         for (int i = indexFirstMask, j = 0; i <= indexFirstMask + 3; ++i, ++j) 
         {
-            keys[j] = this.encodedData[i];
+            keys[j] = wrapped.get();
         }
 
-        int indexFirstData = indexFirstMask + 4;
-
-        byte[] decoded = new byte[(int) realLength];
-
-        for (int i = indexFirstData, j = 0; j < realLength; ++i, ++j) 
+        for (int i = 0; i < decoded.length; ++i)
         {
-            decoded[j] = (byte) (this.encodedData[i] ^ keys[j % 4]);
+            decoded[i] = (byte) (wrapped.get() ^ keys[i % 4]);
         }
 
-        this.decoded = new String(decoded, 0, (int) realLength, "UTF-8");
+        this.decoded = new String(decoded, 0, decoded.length, "UTF-8");
     }
 
     public String getDecodedData() 

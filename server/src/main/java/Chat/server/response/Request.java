@@ -13,14 +13,12 @@ public interface Request
         LOGIN_FAILED,
         LOGIN_OK,
         CLOSE_CONNECTION,
-        PRIVATE_MESSAGE,
-        CANT_SEND_PRIVATE_MESSAGE_BECAUSE_OFFLINE
+        PRIVATE_MESSAGE
     }
 
     /**
      * Method that handle the request
      * 
-     * @param msg the message received
      * @param client the client that sended this request
      * @param logger the server logger
      * @throws Exception

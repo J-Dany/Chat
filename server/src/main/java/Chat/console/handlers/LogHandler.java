@@ -10,9 +10,9 @@ import Chat.server.Server;
  * @author Daniele Castiglia
  * @version 1.1.0
  */
-public class GuiHandler implements Handler
+public class LogHandler implements Handler
 {
-    public GuiHandler()
+    public LogHandler()
     {
         options
             .addOption(Option.builder("h")
@@ -28,13 +28,21 @@ public class GuiHandler implements Handler
     public void handle(String[] args) throws ParseException
     {
         CommandLine cmd = parser.parse(options, args);
-        
+
         if (cmd.hasOption("h"))
         {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("gui", options);
-            return;
+            formatter.printHelp("log", options);
         }
-        Server.server.startGui();
+
+        if (args == null)
+        {
+            System.out.println("> Logs: " + Server.server.logsSize());
+            System.out.println("> Last log: " + Server.server.getLastLog());
+        }
+        else
+        {
+
+        }
     }
 }

@@ -20,8 +20,6 @@ The parameters you can configure for now are:
 - **LOG_FILE_PATH**: the path for the log file. The server logs everything, so you can easily find the problem
 - **HISTORY_FILE_PATH**: Currently not used
 - **MAX_USERS**: the maximum number of users that this chat will handle (by default the maximum is 32)
-- **MAX_MESSAGE_BEFORE_MUTE**: That! provides a system for muting and banning people. This value identifies the maximum number of message that a user can sender before being muted
-- **MAX_MESSAGE_BEFORE_BAN**: Like **MAX_MESSAGE_BEFORE_MUTE**, but this time is for banning clients
 - **Database information**: That! needs access to database in order to authenticate users, store messages, create groups and so on. The ```db.sql``` file, in the root of the project, contains DDL instructions for creating the database.
 The parameters you can configure are the following:
     - **DB_NAME**: the name of the database (the name contained in ```db.sql``` is *chat*)
@@ -45,9 +43,9 @@ When you run the application, you have access to a sort of "console". In fact, o
 ![that_console](images/that_console.PNG)
 
 For now, you can use these commands:
-- **exit** || **stop** || **close** => stops the server
-- **connected** => prints out clients that are connected right now
-- **history** => prints out the list of command typed before
-- **gui** => starts a graphical interface that can handle the server
+- ```exit``` || ```stop``` || ```close``` &#8594; stops the server
+- ```connected [-h | --help]``` &#8594; prints out clients that are connected right now
+- ```history [-n | --index {integer}] [-h | --help]``` &#8594; prints out the list of command typed before
+- ```gui [-h | --help]``` &#8594; starts a graphical interface that can handle the server
 
 ##### Made by Daniele Castiglia

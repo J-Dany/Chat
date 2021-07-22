@@ -8,7 +8,7 @@ import Chat.Logger.LoggerType;
  * Class that represent a log message
  * 
  * @author Daniele Castiglia
- * @version 1.2.1
+ * @version 1.3.0
  */
 public class LogMessage 
 {
@@ -93,6 +93,17 @@ public class LogMessage
     public static LogMessage ok(String msg)
     {
         return new LogMessage(LoggerType.OK, msg);
+    }
+
+    /**
+     * Returns a warning LogMessage instance
+     * 
+     * @param msg the message to write
+     * @return an instance of LogMessage
+     */
+    public static LogMessage warning(String msg)
+    {
+        return new LogMessage(LoggerType.WA, msg);
     }
 
     @Override

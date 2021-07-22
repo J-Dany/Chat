@@ -1,14 +1,20 @@
 package Chat.console;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Stack;
 import Chat.LogMessage;
 import Chat.Logger;
+import Chat.console.exception.CloseConsoleException;
+import Chat.console.exception.CommandNotFound;
+import Chat.console.exception.UnexpectedClosedConsole;
 import Chat.console.handlers.CloseHandler;
 import Chat.console.handlers.ConnectedHandler;
+import Chat.console.handlers.LogHandler;
 import Chat.console.handlers.GuiHandler;
+import Chat.console.handlers.Handler;
 import Chat.console.handlers.HistoryHandler;
 import Chat.server.Server;
 
@@ -74,12 +80,10 @@ public class Console extends Thread
         while (true)
         {
             ////////////////////////////////////
-            // Read the written command       //
+            // Read the command               //
             ////////////////////////////////////
             System.out.print("? ");
             String line = input.nextLine();
-
-            this.logger.addMsg(LogMessage.info("Command: " + line));
 
             try
             {
@@ -92,7 +96,7 @@ public class Console extends Thread
                 String arguments[] = line.split(" ");
 
                 ////////////////////////////////////
-                // Take command name              //
+                // Get command name               //
                 ////////////////////////////////////
                 String command = arguments[0];
 
@@ -107,32 +111,21 @@ public class Console extends Thread
                 }
 
                 ////////////////////////////////////
-                // Instantiating the arguments     //
-                // list                           //
-                ////////////////////////////////////
-                ArrayList<String> args = new ArrayList<>();
-
-                ////////////////////////////////////
-                // Filling the array list with    //
-                // the written params             //
-                ////////////////////////////////////
-                for (int i = 1; i < arguments.length; ++i)
-                {
-                    args.add(arguments[i]);
-                }
-
-                ////////////////////////////////////
                 // Calls the command handler      //
                 // and pass to it its args        //
                 ////////////////////////////////////
                 Handler handler = this.handlers.get(command);
-                
+
                 if (handler == null)
                 {
                     throw new CommandNotFound(command);
                 }
 
-                handler.handle(args);
+                int to = arguments.length == 1
+                    ? 1
+                    : arguments.length;
+
+                handler.handle(Arrays.copyOfRange(arguments, 1, to));
             }
             ////////////////////////////////////
             // This exception means "Ok, I    //
@@ -167,7 +160,7 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (CommandNotFound e)
             {
-                System.err.println(e.getMessage());
+                System.err.println("> " + e.getMessage());
                 this.logger.addMsg(LogMessage.error(e.toString()));
             }
             ////////////////////////////////////
@@ -175,6 +168,7 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (Exception e)
             {
+                System.out.println("> Error: " + e.getMessage());
                 this.logger.addMsg(LogMessage.error(e.toString()));
             }
         }
@@ -211,6 +205,12 @@ public class Console extends Thread
         // handler                        //
         ////////////////////////////////////
         this.handlers.put("connected", new ConnectedHandler());
+
+        ////////////////////////////////////
+        // Setting the "log"              //
+        // handler                        //
+        ////////////////////////////////////
+        this.handlers.put("log", new LogHandler());
     }
 
     /**

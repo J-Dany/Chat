@@ -1,14 +1,14 @@
 package Chat.console.handlers;
 
-import java.util.ArrayList;
 import java.util.Stack;
-import Chat.console.CloseConsoleException;
-import Chat.console.Handler;
-import Chat.console.UnexpectedClosedConsole;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class HistoryHandler implements Handler
 {
@@ -20,25 +20,53 @@ public class HistoryHandler implements Handler
     public HistoryHandler(Stack<String> history)
     {
         this.history = history;
+
+        options
+            .addOption(
+                Option.builder("n")
+                    .longOpt("index")
+                    .desc("Returns the command at specified index")
+                    .required(false)
+                    .hasArg(true)
+                    .type(Integer.class)
+                    .build()
+            )
+            .addOption(
+                Option.builder("h")
+                    .longOpt("help")
+                    .desc("Print this message")
+                    .required(false)
+                    .hasArg(false)
+                    .build()
+            );
     }
 
     @Override
-    public void handle(ArrayList<String> args) throws CloseConsoleException, UnexpectedClosedConsole 
+    public void handle(String[] args) throws ParseException
     {
-        if (args.isEmpty())
+        if (args == null)
         {
-            for (String command : history)
-            {
-                System.out.println(command);
-            }
+            return;
+        }
+
+        CommandLine cmd = parser.parse(options, args);
+
+        if (cmd.hasOption("h"))
+        {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("history", options);
+        }
+        else if (cmd.hasOption("n"))
+        {
+            int index = Integer.parseInt(cmd.getOptionValue("n"));
+
+            System.out.println("> history[" + index + "]: " + history.get(index));
         }
         else
         {
-            int to = Integer.parseInt(args.get(0));
-
-            for (int i = 0; i < to; ++i)
+            for (String command : history)
             {
-                System.out.println(history.get(i));
+                System.out.println("> " + command);
             }
         }
     }

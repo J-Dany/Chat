@@ -1,4 +1,4 @@
-package Chat.console;
+package Chat.console.exception;
 
 /**
  * Represent the exception in the console that

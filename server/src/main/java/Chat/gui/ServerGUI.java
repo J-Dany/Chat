@@ -99,6 +99,9 @@ public class ServerGUI extends Application
                 case IN:
                     l.setTextFill(Color.web("#2196f3"));
                 break;
+                case WA:
+                    l.setTextFill(Color.web("#ffeb3b"));
+                break;
                 case OK:
                     l.setTextFill(Color.web("#4caf50"));
             }
