@@ -33,6 +33,7 @@ public class LogHandler implements Handler
         {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("log", options);
+            return;
         }
 
         if (args == null)
