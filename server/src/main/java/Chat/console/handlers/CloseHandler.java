@@ -3,6 +3,7 @@ package Chat.console.handlers;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import Chat.console.exception.CloseConsoleException;
 
@@ -12,6 +13,11 @@ import Chat.console.exception.CloseConsoleException;
  */
 public class CloseHandler implements Handler
 {
+    /**
+     * Options of the command
+     */
+    final Options options = new Options();
+
     public CloseHandler()
     {
         options

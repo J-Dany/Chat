@@ -51,8 +51,7 @@ public class ClientMessage
      */
     public ClientMessage(WebSocketMessage webSocketMessage) throws Exception
     {
-        webSocketMessage.decodeData();
-        this.json = new JSONObject(webSocketMessage.getDecodedData());
+        this.json = new JSONObject(webSocketMessage.decodeData());
     }
 
     /**

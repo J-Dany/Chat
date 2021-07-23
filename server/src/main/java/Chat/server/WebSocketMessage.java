@@ -1,7 +1,6 @@
 package Chat.server;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.google.gson.Gson;
@@ -10,28 +9,44 @@ import Chat.server.message.Message;
 /**
  * @see https://github.com/pusher/websockets-from-scratch-tutorial/blob/master/README.md
  * @author Daniele Castiglia
- * @version 1.2.2
+ * @version 1.3.0
  */
 public class WebSocketMessage
 {
     private byte[] encodedData;
-    private String decoded;
 
     private Message message;
     private long encodeMessageSize;
     private ByteBuffer encodedMessage;
 
+    /**
+     * Constructor used when receiving data from socket
+     *  
+     * @param data the data coming from the socket
+     * @throws Exception
+     */
     public WebSocketMessage(byte[] data) throws Exception
     {
         this.encodedData = Arrays.copyOf(data, data.length + 1);
     }
 
-    public WebSocketMessage(Message msg) throws UnsupportedEncodingException
+    /**
+     * Constructor used when sending data to socket
+     * 
+     * @param msg the message object
+     */
+    public WebSocketMessage(Message msg)
     {
         this.message = msg;
-        this.encodedMessage = ByteBuffer.allocate(4096);
+        this.encodedMessage = ByteBuffer.allocate(8192);
     }
 
+    /**
+     * Encode the message. This method is called
+     * when {@code getEncodedMessage()} is called
+     * 
+     * @throws IOException
+     */
     private void encodeMessage() throws IOException
     {
         byte firstByte = (byte) 0x81; // 129
@@ -70,6 +85,14 @@ public class WebSocketMessage
         }
     }
 
+    /**
+     * Encodes the message and returns
+     * the buffer where the encoded message
+     * is stored
+     * 
+     * @return byte[] the buffer where the encoded message is stored
+     * @throws IOException
+     */
     public byte[] getEncodedMessage() throws IOException
     {
         this.encodeMessage();
@@ -94,7 +117,14 @@ public class WebSocketMessage
         return tmp;
     }
 
-    public void decodeData() throws Exception 
+    /**
+     * Decodes the data and returns it as
+     * UTF-8 string
+     * 
+     * @return String the decoded data
+     * @throws Exception
+     */
+    public String decodeData() throws Exception 
     {
         ByteBuffer wrapped = ByteBuffer.wrap(this.encodedData);
 
@@ -132,14 +162,14 @@ public class WebSocketMessage
             decoded[i] = (byte) (wrapped.get() ^ keys[i % 4]);
         }
 
-        this.decoded = new String(decoded, 0, decoded.length, "UTF-8");
+        return new String(decoded, 0, decoded.length, "UTF-8");
     }
 
-    public String getDecodedData() 
-    {
-        return this.decoded;
-    }
-
+    /**
+     * Returns the raw data got from
+     * the socket (data that are encoded)
+     * @return byte[] the encoded data
+     */
     public byte[] getRawData()
     {
         return this.encodedData;

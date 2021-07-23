@@ -4,7 +4,6 @@ import Chat.console.exception.CloseConsoleException;
 import Chat.console.exception.UnexpectedClosedConsole;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
@@ -19,11 +18,6 @@ public interface Handler
      * The parser of the command's args
      */
     final CommandLineParser parser = new DefaultParser();
-
-    /**
-     * Options of the command
-     */
-    final Options options = new Options();
 
     /**
      * Method that handle the command. The implementation

@@ -3,6 +3,7 @@ package Chat.console.handlers;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import Chat.server.Client;
 import Chat.server.Server;
@@ -13,6 +14,11 @@ import Chat.server.Server;
  */
 public class ConnectedHandler implements Handler 
 {
+    /**
+     * Options of the command
+     */
+    final Options options = new Options();
+
     public ConnectedHandler()
     {
         options

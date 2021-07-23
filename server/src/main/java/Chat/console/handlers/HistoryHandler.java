@@ -4,6 +4,7 @@ import java.util.Stack;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
@@ -16,6 +17,11 @@ public class HistoryHandler implements Handler
      * Reference to the console history
      */
     private Stack<String> history;
+
+    /**
+     * Options of the command
+     */
+    final Options options = new Options();
 
     public HistoryHandler(Stack<String> history)
     {
