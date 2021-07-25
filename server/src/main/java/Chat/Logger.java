@@ -73,7 +73,10 @@ public class Logger extends Thread
         {
             try
             {
-                this.insertIntoFile(this.queue.take());
+                synchronized (this.queue)
+                {
+                    this.insertIntoFile(this.queue.take());
+                }
             }
             catch (Exception e)
             {
@@ -85,14 +88,17 @@ public class Logger extends Thread
     /**
      * Add msg to the queue
      * 
-     * @param msg the object LogMessagge
+     * @param msg the object LogMessage
      * @see LogMessage
      */
-    public synchronized void addMsg(LogMessage msg)
+    public void addMsg(LogMessage msg)
     {
         try
         {
-            this.queue.add(msg);
+            synchronized (this.queue)
+            {
+                this.queue.add(msg);
+            }
 
             if (Server.server != null)
             {
