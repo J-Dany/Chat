@@ -9,13 +9,6 @@ import Chat.server.Client;
  */
 public interface Request
 {
-    enum RequestReturnValues {
-        LOGIN_FAILED,
-        LOGIN_OK,
-        CLOSE_CONNECTION,
-        PRIVATE_MESSAGE
-    }
-
     /**
      * Method that handle the request
      * 
@@ -23,5 +16,5 @@ public interface Request
      * @param logger the server logger
      * @throws Exception
      */
-    public RequestReturnValues handle(Client client, Logger logger) throws Exception;
+    public void handle(Client client, Logger logger) throws Exception;
 }

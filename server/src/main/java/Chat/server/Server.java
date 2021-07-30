@@ -14,6 +14,7 @@ import Chat.gui.ServerGUI;
 import Chat.server.exception.ClientAlreadyConnectedException;
 import Chat.server.message.info.ClosingServerMessage;
 import io.github.cdimascio.dotenv.*;
+import javafx.application.Application;
 
 /**
  * The message server. Here were all the message
@@ -253,21 +254,33 @@ public class Server extends Thread
     }
 
     /**
+     * Update the GUI with the new
+     * exiting data
+     * 
+     * @param data the data
+     */
+    public void updateExitingData(String data)
+    {
+        if (gui.isOn())
+        {
+            gui.updateExitingData(data);
+        }
+    }
+
+    /**
      * Starts the graphical interface
      */
     public void startGui()
     {
         try
         {
-            String[] args = {};
+            String[] args = new String[0];
 
-            gui.setOn(true);
-            gui.main(args);
-
-            gui = new ServerGUI();
+            Application.launch(ServerGUI.class, args);
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             this.logger.addMsg(LogMessage.error(e.toString()));
         }
     }

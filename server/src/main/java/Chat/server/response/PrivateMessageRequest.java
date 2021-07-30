@@ -27,12 +27,12 @@ public class PrivateMessageRequest implements Request
     }
 
     @Override
-    public RequestReturnValues handle(Client client, Logger logger) throws Exception 
+    public void handle(Client client, Logger logger) throws Exception 
     {
         Connection connection = DatabaseConnection.getConnection();
 
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO messages(data, message, id_group, sender, addresse, content_type, language)"
-        + " VALUES (?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO messages(data, unique_id, message, id_group, sender, addresse, content_type, language)"
+        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 
         int addresseId = 0;
         if (Server.server.getClient(req.getAddresse()) == null)
@@ -52,13 +52,16 @@ public class PrivateMessageRequest implements Request
             addresseId = Server.server.getClient(req.getAddresse()).getId();
         }
 
+        String uniqueId = req.getUniqueId();
+
         statement.setString(1, req.getData());
-        statement.setString(2, req.getMessage());
-        statement.setNull(3, Types.NULL);
-        statement.setInt(4, client.getId());
-        statement.setInt(5, addresseId);
-        statement.setString(6, req.getContent());
-        statement.setString(7, req.getLanguage());
+        statement.setString(2, uniqueId);
+        statement.setString(3, req.getMessage());
+        statement.setNull(4, Types.NULL);
+        statement.setInt(5, client.getId());
+        statement.setInt(6, addresseId);
+        statement.setString(7, req.getContent());
+        statement.setString(8, req.getLanguage());
 
         statement.executeUpdate();
 
@@ -68,6 +71,8 @@ public class PrivateMessageRequest implements Request
             req.getAddresse(),
             new PrivateMessageBuilder()
                 .setSender(client.getUsername())
+                .setUniqueId(uniqueId)
+                .setData(req.getData())
                 .setMessage(req.getMessage())
                 .setHM(req.getHM())
                 .setContent(req.getContent())
@@ -75,6 +80,6 @@ public class PrivateMessageRequest implements Request
                 .build()
         );
 
-        return RequestReturnValues.PRIVATE_MESSAGE;
+        logger.addMsg(LogMessage.ok("Message sent"));
     }
 }

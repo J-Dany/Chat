@@ -1,7 +1,6 @@
 package Chat;
 
 import java.sql.SQLException;
-
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
 import io.github.cdimascio.dotenv.*;
@@ -39,6 +38,7 @@ public class Main
             logger.start();
 
             logger.addMsg(LogMessage.info("Establishing a connection to the database..."));
+
             ////////////////////////////////////
             // Try to establish a connection  //
             // to the database                //
@@ -46,13 +46,13 @@ public class Main
             try
             {
                 DatabaseConnection.getConnection();
+
+                logger.addMsg(LogMessage.ok("Connection to the database established"));
             }
             catch (SQLException e)
             {
                 System.out.println("Can't establish a connection to the database!");
             }
-
-            logger.addMsg(LogMessage.ok("Connection established"));
 
             logger.addMsg(LogMessage.info("Starting the server..."));
 

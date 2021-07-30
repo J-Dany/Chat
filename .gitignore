@@ -9,3 +9,4 @@ bin
 .project
 log.log
 gradle.properties
+.vs

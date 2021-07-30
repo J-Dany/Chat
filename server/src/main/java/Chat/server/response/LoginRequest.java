@@ -9,6 +9,7 @@ import com.google.common.hash.Hashing;
 import Chat.LogMessage;
 import Chat.Logger;
 import Chat.server.Client;
+import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
 import Chat.server.message.info.LoginMessage;
 import Chat.server.message.request.LoginRequestMessage;
@@ -27,7 +28,7 @@ public class LoginRequest implements Request
     }
 
     @Override
-    public RequestReturnValues handle(Client client, Logger logger) throws Exception 
+    public void handle(Client client, Logger logger) throws Exception 
     {        
         Connection connection = DatabaseConnection.getConnection();
 
@@ -60,10 +61,16 @@ public class LoginRequest implements Request
             client.setUsername(req.getUsername());
             client.sendMessage(new LoginMessage(true, result.getInt("id_user")));
 
-            return RequestReturnValues.LOGIN_OK;
+            Server.server.addNewConnectedClient(client.getUsername(), client);
+            client.sendListOfFriend();
+            client.notifyOnlineToFriend();
+            logger.addMsg(LogMessage.info("Login ok for " + client.getAddress() + " (" + client.getUsername() + ")"));
+
+            return;
         }
         
+        logger.addMsg(LogMessage.info("Login failed for " + client.getAddress()));
+
         client.sendMessage(new LoginMessage(false, -1));
-        return RequestReturnValues.LOGIN_FAILED;
     }
 }

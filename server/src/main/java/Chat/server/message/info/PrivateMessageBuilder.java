@@ -6,6 +6,7 @@ package Chat.server.message.info;
  */
 public class PrivateMessageBuilder
 {
+    private String UniqueId;
     private String Sender;
     private String Message;
     private String Data;
@@ -14,6 +15,13 @@ public class PrivateMessageBuilder
     private String Language;
 
     public PrivateMessageBuilder() { }
+
+    public PrivateMessageBuilder setUniqueId(String UniqueId)
+    {
+        this.UniqueId = UniqueId;
+
+        return this;
+    }
 
     public PrivateMessageBuilder setSender(String Sender) 
     {
@@ -59,6 +67,6 @@ public class PrivateMessageBuilder
 
     public PrivateMessage build()
     {
-        return new PrivateMessage(Content, Language, Sender, Message, Data, HM);
+        return new PrivateMessage(UniqueId, Content, Language, Sender, Message, Data, HM);
     }
 }

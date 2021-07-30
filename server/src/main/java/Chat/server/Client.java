@@ -24,7 +24,7 @@ import Chat.server.pojo.Friend;
  * @author Daniele Castiglia
  * @version 1.4.0
  */
-public class Client 
+public class Client
 {
     /**
      * The IP of the client
@@ -124,6 +124,10 @@ public class Client
     public void sendMessage(Message msg) throws IOException
     {
         WebSocketMessage wbm = new WebSocketMessage(msg);
+
+        String message = new String(wbm.getEncodedMessage(), "UTF-8");
+
+        Server.server.updateExitingData(message);
 
         this.writer.write(wbm.getEncodedMessage());
         this.writer.flush();

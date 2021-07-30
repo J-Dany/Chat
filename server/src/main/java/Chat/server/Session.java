@@ -87,23 +87,7 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 // Handle the request             //
                 ////////////////////////////////////
-                switch (request.handle(this.client, this.logger))
-                {
-                    case LOGIN_FAILED:
-                        logger.addMsg(LogMessage.info("Login failed for " + this.client.getAddress()));
-                        return;
-                    case LOGIN_OK:
-                        Server.server.addNewConnectedClient(client.getUsername(), client);
-                        client.sendListOfFriend();
-                        client.notifyOnlineToFriend();
-                        logger.addMsg(LogMessage.info("Login ok for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
-                    break;
-                    case PRIVATE_MESSAGE:
-                        logger.addMsg(LogMessage.ok("Message sent"));
-                    break;
-                    case CLOSE_CONNECTION:
-                        throw new CloseConnectionException(client.getUsername());
-                }
+                request.handle(this.client, this.logger);
             }
             ////////////////////////////////////
             // Exception for closing the      //

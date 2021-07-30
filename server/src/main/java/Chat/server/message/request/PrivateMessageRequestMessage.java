@@ -4,7 +4,7 @@ import Chat.server.message.Message;
 
 /**
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class PrivateMessageRequestMessage extends Message
 {
@@ -14,10 +14,11 @@ public class PrivateMessageRequestMessage extends Message
     private String Addresse;
     private String HM;
     private String Data;
+    private String UniqueId;
 
     public PrivateMessageRequestMessage() { }
 
-    public String getContent() 
+    public String getContent()
     {
         return this.Content;
     }
@@ -39,7 +40,7 @@ public class PrivateMessageRequestMessage extends Message
 
     public String getMessage() 
     {
-        return this.Message;
+        return this.Message.trim();
     }
 
     public void setMessage(String Message) 
@@ -73,5 +74,15 @@ public class PrivateMessageRequestMessage extends Message
     public void setData(String Data) 
     {
         this.Data = Data;
+    }
+
+    public String getUniqueId() 
+    {
+        return this.UniqueId;
+    }
+
+    public void setUniqueId(String UniqueId) 
+    {
+        this.UniqueId = UniqueId;
     }
 }

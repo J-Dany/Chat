@@ -3,12 +3,16 @@ package Chat.gui;
 import java.util.HashMap;
 import Chat.server.Server;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -38,6 +42,13 @@ public class GuiController
     @FXML
     private ListView<Label> logs;
 
+    /**
+     * What the server is sending
+     * through the socket
+     */
+    @FXML
+    private ListView<Label> exitingData;
+
     @FXML
     public void initialize() { }
 
@@ -63,7 +74,6 @@ public class GuiController
     @FXML
     void handleClickOnInfo(MouseEvent event)
     {
-        System.out.println("Salve");
         try
         {
             Parent root = FXMLLoader.load(getClass().getResource("/info.fxml"));
@@ -76,7 +86,7 @@ public class GuiController
             stage.setScene(scene);
             stage.setResizable(false);
 
-            stage.initOwner(ServerGUI.getInstance().getPrimaryStage());
+            stage.initOwner(ServerGUI.getPrimaryStage());
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
         }
@@ -107,5 +117,23 @@ public class GuiController
         {
             listUsers.getItems().remove(clients.get(c));
         }
+    }
+
+    public void updateExitingData(String data)
+    {
+        Label l = new Label(data);
+        l.setTextFill(Color.WHITE);
+
+        l.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent e)
+            {
+                Alert alert = new Alert(AlertType.NONE, l.getText(), ButtonType.OK);
+
+                alert.showAndWait();
+            }
+        });
+
+        exitingData.getItems().add(l);
     }
 }

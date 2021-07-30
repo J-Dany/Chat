@@ -46,7 +46,7 @@ For now, you can use these commands:
 - ```exit``` || ```stop``` || ```close``` &#8594; stops the server
 - ```connected [-h | --help]``` &#8594; prints out clients that are connected right now
 - ```history [-n | --index {integer}] [-h | --help]``` &#8594; prints out the list of command typed before
-- ```gui [-h | --help]``` &#8594; starts a graphical interface that can handle the server
+- ```gui [-h | --help]``` &#8594; starts a graphical interface that can handle the server (you can use it only once per run)
 - ```log [-h | --help]``` &#8594; prints out the number of logs and the last log
 
 ##### Made by Daniele Castiglia

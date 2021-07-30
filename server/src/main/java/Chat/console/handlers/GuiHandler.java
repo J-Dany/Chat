@@ -39,8 +39,10 @@ public class GuiHandler implements Handler
         {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("gui", options);
+
             return;
         }
+
         Server.server.startGui();
     }
 }

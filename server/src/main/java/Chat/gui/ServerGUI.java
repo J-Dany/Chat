@@ -2,7 +2,6 @@ package Chat.gui;
 
 import Chat.LogMessage;
 import Chat.server.Client;
-import Chat.server.Server;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -15,79 +14,55 @@ import javafx.stage.Stage;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.1
+ * @version 2.0.4
  */
 public class ServerGUI extends Application
 {
-    private boolean on = false;
-    private GuiController controller;
-    private static ServerGUI instance;
-    private Stage primaryStage;
+    private static boolean on = false;
+    private static GuiController controller;
+    private static Stage primaryStage;
 
-    public static void main(String[] args)
+    private String title;
+
+    /**
+     * Default ctor
+     */
+    public ServerGUI()
     {
-        instance = new ServerGUI();
-        launch(args);
+        this.title = "That!";
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception 
     {
-        ////////////////////////////////////
-        // Loading the fxml file          //
-        ////////////////////////////////////
+        ServerGUI.primaryStage = primaryStage;
+
+        primaryStage.setTitle(this.title);
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui.fxml"));
-        Parent root = loader.load();
+        Parent root = (Parent) loader.load();
 
-        ////////////////////////////////////
-        // Giving the controller to the   //
-        // instance of ServerGUI. When    //
-        // javafx starts an application   //
-        // it starts a new thread, not a  //
-        // ServerGUI instance             //
-        ////////////////////////////////////
-        instance.controller = (GuiController) loader.getController();
+        controller = (GuiController) loader.getController();
 
-        ////////////////////////////////////
-        // When the application is ready, //
-        // load into the users list view  //
-        // connected clients              //
-        ////////////////////////////////////
-        Platform.runLater(() ->
-        {
-            for (Client c : Server.server.getConnectedClients())
-            {
-                instance.controller.upgradeListUsers(c.toString());
-            }
-        });
-
-        instance.primaryStage = primaryStage;
-
-        ////////////////////////////////////
-        // Instantiated a Scene object    //
-        // with the given fxml            //
-        ////////////////////////////////////
         Scene scene = new Scene(root);
-
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.getIcons().add(new Image(getClass().getResource("/icona_chat.png").toString()));
-        primaryStage.setTitle("Server");
-        primaryStage.setResizable(false);
-
         primaryStage.setScene(scene);
+
+        on = true;
         primaryStage.show();
     }
 
     /**
      * Upgrades logs in the GUI
+     * 
      * @param type type of the log
      * @param msg the message
      */
     public void upgradeLogs(LogMessage msg)
     {
-        Platform.runLater(() -> 
-        {
+        Platform.runLater(() -> {
             Label l = new Label(msg.toString());
 
             switch(msg.getTypeOfMessage())
@@ -106,8 +81,18 @@ public class ServerGUI extends Application
                     l.setTextFill(Color.web("#4caf50"));
             }
 
-            instance.controller.upgradeLogs(l);
+            controller.upgradeLogs(l);
         });
+    }
+
+    /**
+     * Update the exitingData list view
+     * 
+     * @param data the data
+     */
+    public void updateExitingData(String data)
+    {
+        Platform.runLater(() -> controller.updateExitingData(data));
     }
 
     /**
@@ -117,9 +102,7 @@ public class ServerGUI extends Application
      */
     public void upgradeListUsers(Client c)
     {
-        Platform.runLater(() -> {
-            instance.controller.upgradeListUsers(c.toString());
-        });
+        Platform.runLater(() -> controller.upgradeListUsers(c.toString()));
     }
 
     /**
@@ -128,42 +111,39 @@ public class ServerGUI extends Application
      */
     public void removeUser(Client c)
     {
-        Platform.runLater(() -> {
-            instance.controller.removeUser(c.toString());
-        });
+        if (c != null)
+        {
+            Platform.runLater(() -> controller.removeUser(c.toString()));
+        }
     }
 
     /**
-     * Returns either is on or not
+     * True if is on, false otherwise
+     * 
      * @return boolean
      */
     public boolean isOn()
     {
-        return this.on;
+        return on;
     }
 
     /**
-     * Sets the value of "on"
-     * @param value either true or false
+     * Close the app
      */
-    public void setOn(boolean value)
-    {
-        this.on = value;
-    }
-
-    @Override
-    public void stop()
+    public void close()
     {
         on = false;
+
+        primaryStage.close();
     }
 
-    public static ServerGUI getInstance()
+    /**
+     * Get the primary stage of the application
+     * 
+     * @return Stage
+     */
+    public static Stage getPrimaryStage()
     {
-        return instance;
-    }
-
-    public Stage getPrimaryStage()
-    {
-        return instance.primaryStage;
+        return primaryStage;
     }
 }

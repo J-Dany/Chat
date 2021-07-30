@@ -89,4 +89,11 @@
          </padding>
       </HBox>
    </top>
+   <right>
+      <ListView fx:id="exitingData" focusTraversable="false" style="-fx-background-color: #37474f;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+      </ListView>
+   </right>
 </BorderPane>

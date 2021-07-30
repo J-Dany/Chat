@@ -35,9 +35,17 @@ CREATE TABLE messages(
 	`addresse` INT,
 	`content_type` ENUM("PLAIN", "CODE") NOT NULL,
 	`language` VARCHAR(255),
+	`unique_id` VARCHAR(64) NOT NULL,
 	CONSTRAINT `fk_messagesGroups` FOREIGN KEY (`id_group`) REFERENCES `crowds`(`id_group`),
 	CONSTRAINT `fk_messagesUsersSender` FOREIGN KEY (`sender`) REFERENCES `users`(`id_user`),
 	CONSTRAINT `fk_messagesUsersAddresse` FOREIGN KEY (addresse) REFERENCES `users`(`id_user`)
+);
+
+CREATE TABLE executors(
+	`id_executor` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`language` VARCHAR(64) NOT NULL UNIQUE KEY,
+	`command_exec` VARCHAR(255),
+	`compiler` VARCHAR(255)
 );
 
 CREATE TABLE partecipants(
@@ -47,3 +55,10 @@ CREATE TABLE partecipants(
 	CONSTRAINT `fk_partecipantsUsers` FOREIGN KEY (`id_user`) REFERENCES `users`(`id_user`),
 	CONSTRAINT `fk_partecipantsGroups` FOREIGN KEY (`id_group`) REFERENCES `crowds`(`id_group`)
 );
+
+insert into executors(`language`, `command_exec`, `compiler`) values
+("java", "java {fileName}", "javac {fileNameWithExt}"),
+("c_cpp", "{fileName}", "g++ {fileNameWithExt} -o {fileName}"),
+("python", "python {fileNameWithExt}", NULL),
+("javascript", "node {fileNameWithExt}", NULL),
+("php", "php {fileNameWithExt}", NULL);

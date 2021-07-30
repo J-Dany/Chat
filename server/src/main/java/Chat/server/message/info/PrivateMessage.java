@@ -9,6 +9,7 @@ import Chat.server.message.Message;
  */
 public class PrivateMessage extends Message
 {
+    private String UniqueId;
     private String Sender;
     private String Message;
     private String Data;
@@ -26,8 +27,9 @@ public class PrivateMessage extends Message
      * @param data data of the message
      * @param HM hour and minute of the message
      */
-    public PrivateMessage(String content, String language, String sender, String message, String data, String HM)
+    public PrivateMessage(String UniqueId, String content, String language, String sender, String message, String data, String HM)
     {
+        this.UniqueId = UniqueId;
         this.Type = TypeOfMessage.FOR_PRIVATE;
         this.Content = content;
         this.Sender = sender;

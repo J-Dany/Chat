@@ -43,6 +43,7 @@ public class Logger extends Thread
      * - OK => an operation returns successfully 
      * - ER => stands for "error", represents a message error
      * - IN => stands for "info", represents a info message
+     * - WA => stands for "warning", represents a warning message
      */
     public enum LoggerType
     {
@@ -73,10 +74,7 @@ public class Logger extends Thread
         {
             try
             {
-                synchronized (this.queue)
-                {
-                    this.insertIntoFile(this.queue.take());
-                }
+                this.insertIntoFile(this.queue.take());
             }
             catch (Exception e)
             {

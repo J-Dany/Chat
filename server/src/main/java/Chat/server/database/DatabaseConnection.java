@@ -15,7 +15,8 @@ public class DatabaseConnection
      * Database URL, loaded from .env file
      */
     public static final String DB_URL = 
-    "jdbc:mysql://" + Dotenv.load().get("DB_HOST") + "/" + Dotenv.load().get("DB_NAME");
+    "jdbc:mysql://" + Dotenv.load().get("DB_HOST") + "/" 
+    + Dotenv.load().get("DB_NAME") + "?autoReconnect=false&connectTimeout=10000&socketTimeout=10000";
 
     /**
      * The connection to the database
@@ -33,6 +34,7 @@ public class DatabaseConnection
     {
         if (connection == null)
         {
+            DriverManager.setLoginTimeout(2);
             connection = DriverManager.getConnection(DB_URL, Dotenv.load().get("DB_USER"), Dotenv.load().get("DB_PASSWD"));
         }
 
