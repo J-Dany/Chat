@@ -61,7 +61,7 @@ public class Main
             // setting the logger for the     //
             // server and starts it           //
             ////////////////////////////////////
-            Server server = new Server(60000);
+            Server server = new Server(3678);
             server.setLogger(logger);
             server.start();
 
