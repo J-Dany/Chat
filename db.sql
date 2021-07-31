@@ -29,7 +29,7 @@ CREATE TABLE crowds(
 CREATE TABLE messages(
 	`id_message` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`data` DATETIME NOT NULL,
-	`message` VARCHAR(512) NOT NULL,
+	`message` TEXT NOT NULL,
 	`id_group` INT,
 	`sender` INT NOT NULL,
 	`addresse` INT,
