@@ -1,6 +1,5 @@
 package Chat.server.response;
 
-import Chat.Logger;
 import Chat.server.Client;
 
 /**
@@ -9,8 +8,6 @@ import Chat.server.Client;
  */
 public interface Request
 {
-    public Logger logger = Logger.getLogger();
-
     /**
      * Method that handle the request
      * 

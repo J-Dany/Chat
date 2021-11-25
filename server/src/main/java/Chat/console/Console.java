@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Stack;
-import Chat.LogMessage;
 import Chat.Logger;
 import Chat.console.exception.CloseConsoleException;
 import Chat.console.exception.CommandNotFound;
@@ -38,11 +37,6 @@ public class Console extends Thread
     private Server server;
 
     /**
-     * A reference to the server logger
-     */
-    private Logger logger;
-
-    /**
      * Console history
      */
     private Stack<String> history;
@@ -65,7 +59,6 @@ public class Console extends Thread
         this.setHandlers();
         this.setIgnoredCommands();
         this.server = Server.server;
-        this.logger = Logger.getLogger();
     }
 
     @Override
@@ -140,7 +133,7 @@ public class Console extends Thread
                 }
                 catch (Exception ex)
                 {
-                    this.logger.addMsg(LogMessage.error(ex.toString()));
+                    Logger.error(ex.toString());
                 }
 
                 break;
@@ -150,7 +143,7 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (UnexpectedClosedConsole e)
             {
-                this.logger.addMsg(LogMessage.error(e.toString()));
+                Logger.error(e.toString());
                 break;
             }
             ////////////////////////////////////
@@ -161,7 +154,7 @@ public class Console extends Thread
             catch (CommandNotFound e)
             {
                 System.err.println("> " + e.getMessage());
-                this.logger.addMsg(LogMessage.error(e.toString()));
+                Logger.error(e.toString());
             }
             ////////////////////////////////////
             // Any other exception            //
@@ -169,7 +162,7 @@ public class Console extends Thread
             catch (Exception e)
             {
                 System.out.println("> Error: " + e.getMessage());
-                this.logger.addMsg(LogMessage.error(e.toString()));
+                Logger.error(e.toString());
             }
         }
 

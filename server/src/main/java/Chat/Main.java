@@ -20,17 +20,11 @@ public class Main
         ////////////////////////////////////
         Thread.currentThread().setName("Main");
 
-        Logger logger = null;
+        Logger.createLogger();
 
         try
         {
-            ////////////////////////////////////
-            // Create an instance of Logger   //
-            // and starts the thread          //
-            ////////////////////////////////////
-            logger = Logger.getLogger();
-
-            logger.addMsg(LogMessage.info("Establishing a connection to the database..."));
+            Logger.info("Establishing a connection to the database...");
 
             ////////////////////////////////////
             // Try to establish a connection  //
@@ -40,14 +34,14 @@ public class Main
             {
                 DatabaseConnection.getConnection();
 
-                logger.addMsg(LogMessage.ok("Connection to the database established"));
+                Logger.ok("Connection to the database established");
             }
             catch (SQLException e)
             {
                 System.out.println("Can't establish a connection to the database!");
             }
 
-            logger.addMsg(LogMessage.info("Starting the server..."));
+            Logger.info("Starting the server...");
 
             ////////////////////////////////////
             // instantiation of server,       //
@@ -57,7 +51,7 @@ public class Main
             Server server = new Server(3678);
             server.start();
 
-            logger.addMsg(LogMessage.ok("Server started"));
+            Logger.ok("Server started");
 
             ////////////////////////////////////
             // Wait for the server finishing  //
@@ -65,24 +59,13 @@ public class Main
             ////////////////////////////////////
             server.join();
 
-            logger.addMsg(LogMessage.ok("Server closed"));
+            Logger.ok("Server closed");
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
 
-        if (logger != null)
-        {
-            try
-            {
-                logger.interrupt();
-                logger.join();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
+        Logger.closeLogger();
     }
 }

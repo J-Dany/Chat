@@ -70,12 +70,6 @@ public class Server extends Thread
     private Console console;
 
     /**
-     * The reference to the Main
-     * logger
-     */
-    private Logger logger = null;
-
-    /**
      * This thread pool will handle
      * all connection
      */
@@ -95,14 +89,6 @@ public class Server extends Thread
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
         this.logs = new ArrayList<>();
-        try
-        {
-            this.logger = Logger.getLogger();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
         server = this;
     }
 
@@ -121,14 +107,6 @@ public class Server extends Thread
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
         this.logs = new ArrayList<>();
-        try
-        {
-            this.logger = Logger.getLogger();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
         server = this;
     }
 
@@ -150,7 +128,7 @@ public class Server extends Thread
         {
             try
             {
-                this.logger.addMsg(LogMessage.info("Listening for incoming connection"));
+                Logger.info("Listening for incoming connection");
 
                 ////////////////////////////////////
                 // Accepts connections            //
@@ -159,30 +137,19 @@ public class Server extends Thread
 
                 if (this.connected.size() >= THREAD_POOL_SIZE)
                 {
-                    this.logger.addMsg(LogMessage.ok("Connection refused for " + s.getInetAddress() + "(reached the maximum connection)"));
+                    Logger.ok("Connection refused for " + s.getInetAddress() + "(reached the maximum connection)");
                     s.close();
 
                     continue;
                 }
 
-                this.logger.addMsg(LogMessage.ok("Connection accepted for " + s.getInetAddress()));
+                Logger.ok("Connection accepted for " + s.getInetAddress());
 
-                this.threadPool.submit(new Session(new Client(s), this.logger));
+                this.threadPool.submit(new Session(new Client(s)));
             }
             catch (Exception e)
             {
-                ////////////////////////////////////
-                // If logger is not set, print    //
-                // in standard output             //
-                ////////////////////////////////////
-                if (this.logger != null)
-                {
-                    this.logger.addMsg(LogMessage.error(e.toString()));
-                }
-                else
-                {
-                    e.printStackTrace();
-                }
+                Logger.error(e.getMessage());
             }
         }
     }
@@ -263,7 +230,7 @@ public class Server extends Thread
         }
         catch (IndexOutOfBoundsException e)
         {
-            this.logger.addMsg(LogMessage.error(e.toString()));
+            Logger.error(e.toString());
         }
 
         return null;
@@ -297,7 +264,7 @@ public class Server extends Thread
         catch (Exception e)
         {
             e.printStackTrace();
-            this.logger.addMsg(LogMessage.error(e.toString()));
+            Logger.error(e.toString());
         }
     }
 
@@ -357,7 +324,7 @@ public class Server extends Thread
      */
     public void close() throws IOException, InterruptedException
     {
-        this.logger.addMsg(LogMessage.info("Closing the server"));
+        Logger.info("Closing the server");
 
         for (Client c : this.connected.values())
         {

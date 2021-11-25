@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
-import Chat.LogMessage;
+import Chat.Logger;
 import Chat.server.Client;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
@@ -64,7 +64,7 @@ public class PrivateMessageRequest implements Request
 
         statement.executeUpdate();
 
-        logger.addMsg(LogMessage.info("Sending message => " + client.getUsername() + " -> " + req.getAddresse()));
+        Logger.info("Sending message => " + client.getUsername() + " -> " + req.getAddresse());
 
         client.sendToFriend(
             req.getAddresse(),
@@ -79,6 +79,6 @@ public class PrivateMessageRequest implements Request
                 .build()
         );
 
-        logger.addMsg(LogMessage.ok("Message sent"));
+        Logger.ok("Message sent");
     }
 }

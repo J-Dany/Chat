@@ -15,8 +15,8 @@ public class DatabaseConnection
      * Database URL, loaded from .env file
      */
     public static final String DB_URL = 
-    "jdbc:mysql://" + Dotenv.load().get("DB_HOST") + "/" 
-    + Dotenv.load().get("DB_NAME") + "?autoReconnect=false&connectTimeout=10000&socketTimeout=10000";
+        "jdbc:mysql://" + Dotenv.load().get("DB_HOST") + "/" 
+        + Dotenv.load().get("DB_NAME") + "?autoReconnect=false&connectTimeout=10000&socketTimeout=10000";
 
     /**
      * The connection to the database

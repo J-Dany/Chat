@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.Base64;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import Chat.LogMessage;
+import Chat.Logger;
 import Chat.server.Client;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
@@ -37,7 +37,7 @@ public class LoginRequest implements Request
 
         ResultSet result = stmt.executeQuery(query);
 
-        logger.addMsg(LogMessage.ok("Database interrogated for " + client.getAddress()));
+        Logger.ok("Database interrogated for " + client.getAddress());
 
         int num_rows = 0;
 
@@ -63,12 +63,12 @@ public class LoginRequest implements Request
             Server.server.addNewConnectedClient(client.getUsername(), client);
             client.sendListOfFriend();
             client.notifyOnlineToFriend();
-            logger.addMsg(LogMessage.info("Login ok for " + client.getAddress() + " (" + client.getUsername() + ")"));
+            Logger.info("Login ok for " + client.getAddress() + " (" + client.getUsername() + ")");
 
             return;
         }
         
-        logger.addMsg(LogMessage.info("Login failed for " + client.getAddress()));
+        Logger.info("Login failed for " + client.getAddress());
 
         client.sendMessage(new LoginMessage(false, -1));
     }

@@ -15,7 +15,7 @@ import io.github.cdimascio.dotenv.Dotenv;
  * Class for logging messages
  * 
  * @author Daniele Castiglia
- * @version 1.2.0
+ * @version 1.3.0
  */
 public class Logger extends Thread
 {
@@ -72,7 +72,7 @@ public class Logger extends Thread
         this.start();
     }
 
-    public static Logger getLogger()
+    public static Logger createLogger()
     {
         if (logger == null)
         {
@@ -87,6 +87,47 @@ public class Logger extends Thread
         }
 
         return logger;
+    }
+
+    public static void closeLogger()
+    {
+        logger.close();
+    }
+
+    /**
+     * Log a OK message
+     * @param msg
+     */
+    public static void ok(String msg)
+    {
+        logger.addMsg(LogMessage.ok(msg));
+    }
+
+    /**
+     * Log a WARNING message
+     * @param msg
+     */
+    public static void warning(String msg)
+    {
+        logger.addMsg(LogMessage.warning(msg));
+    }
+
+    /**
+     * Log a ERROR message
+     * @param msg
+     */
+    public static void error(String msg)
+    {
+        logger.addMsg(LogMessage.error(msg));
+    }
+
+    /**
+     * Log a INFO message
+     * @param msg
+     */
+    public static void info(String msg)
+    {
+        logger.addMsg(LogMessage.info(msg));
     }
 
     @Override
@@ -111,7 +152,7 @@ public class Logger extends Thread
      * @param msg the object LogMessage
      * @see LogMessage
      */
-    public void addMsg(LogMessage msg)
+    private void addMsg(LogMessage msg)
     {
         try
         {

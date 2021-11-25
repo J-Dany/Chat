@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Base64;
-import Chat.LogMessage;
 import Chat.Logger;
 import Chat.server.exception.CloseConnectionException;
 import Chat.server.response.Request;
@@ -23,18 +22,12 @@ public class Session implements Runnable
     private Client client;
 
     /**
-     * Reference to the logger
-     */
-    private Logger logger;
-
-    /**
      * Constructor
      * @param c the client that this connection will handle
      */
-    public Session(Client c, Logger log)
+    public Session(Client c)
     {
         this.client = c;
-        this.logger = log;
     }
     
     @Override
@@ -56,7 +49,7 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 byte[] buffer = this.client.listenForIncomingMessage();
                 
-                logger.addMsg(LogMessage.ok("Message received from " + this.client.getAddress()));
+                Logger.ok("Message received from " + this.client.getAddress());
 
                 ClientMessage msg = null;
 
@@ -72,7 +65,7 @@ public class Session implements Runnable
                 }
                 catch (Exception e)
                 {
-                    this.logger.addMsg(LogMessage.error(e.toString()));
+                    Logger.error(e.toString());
                     continue;
                 }
 
@@ -82,7 +75,7 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage(), msg.getRawString());
 
-                this.logger.addMsg(LogMessage.info("Handler instantiated for " + this.client.getAddress() + ": " + request.getClass().getName()));
+                Logger.info("Handler instantiated for " + this.client.getAddress() + ": " + request.getClass().getName());
 
                 ////////////////////////////////////
                 // Handle the request             //
@@ -96,7 +89,7 @@ public class Session implements Runnable
             ////////////////////////////////////
             catch (CloseConnectionException e)
             {
-                logger.addMsg(LogMessage.info(e.toString()));
+                Logger.info(e.toString());
                 break;
             }
             ////////////////////////////////////
@@ -105,12 +98,12 @@ public class Session implements Runnable
             ////////////////////////////////////
             catch (IllegalArgumentException | SocketException e)
             {
-                logger.addMsg(LogMessage.error(e.toString()));
+                Logger.error(e.toString());
                 break;
             }
             catch (Exception e)
             {
-                logger.addMsg(LogMessage.error(e.toString()));
+                Logger.error(e.toString());
             }
         }
 
@@ -124,14 +117,14 @@ public class Session implements Runnable
         }
         catch (Exception e)
         {
-            this.logger.addMsg(LogMessage.error(e.toString()));
+            Logger.error(e.toString());
         }
 
         ////////////////////////////////////
         // Remove the client from the     //
         // server                         //
         ////////////////////////////////////
-        this.logger.addMsg(LogMessage.ok("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")"));
+        Logger.ok("Connection closed for " + this.client.getAddress() + " (" + this.client.getUsername() + ")");
         Server.server.removeConnectedClient(client.getUsername());
     }
 
@@ -148,7 +141,7 @@ public class Session implements Runnable
             byte[] buffer = this.client.listenForIncomingMessage();
             String msg = new String(buffer, 0, buffer.length, "UTF-8");
 
-            this.logger.addMsg(LogMessage.info("Creating the response connection"));
+            Logger.info("Creating the response connection");
 
             Matcher get = Pattern.compile("^GET").matcher(msg);
 
@@ -167,12 +160,12 @@ public class Session implements Runnable
 
                 this.client.sendMessage(response);
 
-                this.logger.addMsg(LogMessage.ok("Response created and sent to " + this.client.getAddress()));
+                Logger.ok("Response created and sent to " + this.client.getAddress());
             }
         }
         catch (Exception e)
         {
-            this.logger.addMsg(LogMessage.error(e.toString()));
+            Logger.error(e.toString());
         }
     }
 }

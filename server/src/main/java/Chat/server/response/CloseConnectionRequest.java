@@ -2,7 +2,7 @@ package Chat.server.response;
 
 import Chat.server.Client;
 import Chat.server.exception.CloseConnectionException;
-import Chat.LogMessage;
+import Chat.Logger;
 
 /**
  * @author Daniele Castiglia
@@ -13,7 +13,7 @@ public class CloseConnectionRequest implements Request
     @Override
     public void handle(Client client) throws Exception 
     {
-        logger.addMsg(LogMessage.info("Disconnection request from " + client.getAddress() + " (" + client.getUsername() + ")"));
+        Logger.info("Disconnection request from " + client.getAddress() + " (" + client.getUsername() + ")");
         
         throw new CloseConnectionException(client.getUsername());
     }
