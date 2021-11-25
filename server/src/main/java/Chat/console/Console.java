@@ -10,12 +10,12 @@ import Chat.Logger;
 import Chat.console.exception.CloseConsoleException;
 import Chat.console.exception.CommandNotFound;
 import Chat.console.exception.UnexpectedClosedConsole;
-import Chat.console.handlers.CloseHandler;
-import Chat.console.handlers.ConnectedHandler;
-import Chat.console.handlers.LogHandler;
-import Chat.console.handlers.GuiHandler;
-import Chat.console.handlers.Handler;
-import Chat.console.handlers.HistoryHandler;
+import Chat.console.handlers.CloseCommand;
+import Chat.console.handlers.ConnectedCommand;
+import Chat.console.handlers.LogCommand;
+import Chat.console.handlers.GuiCommand;
+import Chat.console.handlers.Command;
+import Chat.console.handlers.HistoryCommand;
 import Chat.server.Server;
 
 /**
@@ -30,7 +30,7 @@ public class Console extends Thread
      * The HashMap containing handler
      * for each command available
      */
-    private HashMap<String, Handler> handlers;
+    private HashMap<String, Command> commands;
 
     /**
      * A reference to the server
@@ -56,16 +56,16 @@ public class Console extends Thread
     /**
      * Constructor
      */
-    public Console(Server server, Logger logger)
+    public Console()
     {
         this.setName("Console");
         this.ignoredCommand = new ArrayList<>();
         this.history = new Stack<>();
-        this.handlers = new HashMap<>();
+        this.commands = new HashMap<>();
         this.setHandlers();
         this.setIgnoredCommands();
-        this.server = server;
-        this.logger = logger;
+        this.server = Server.server;
+        this.logger = Logger.getLogger();
     }
 
     @Override
@@ -98,14 +98,14 @@ public class Console extends Thread
                 ////////////////////////////////////
                 // Get command name               //
                 ////////////////////////////////////
-                String command = arguments[0];
+                String com = arguments[0];
 
                 ////////////////////////////////////
                 // There is a set of commands     //
                 // to be ignored when saving the  //
                 // command to history             //
                 ////////////////////////////////////
-                if (!this.ignoredCommand.contains(command))
+                if (!this.ignoredCommand.contains(com))
                 {
                     this.history.push(line);
                 }
@@ -114,18 +114,18 @@ public class Console extends Thread
                 // Calls the command handler      //
                 // and pass to it its args        //
                 ////////////////////////////////////
-                Handler handler = this.handlers.get(command);
+                Command command = this.commands.get(com);
 
-                if (handler == null)
+                if (command == null)
                 {
-                    throw new CommandNotFound(command);
+                    throw new CommandNotFound(com);
                 }
 
                 int to = arguments.length == 1
                     ? 1
                     : arguments.length;
 
-                handler.handle(Arrays.copyOfRange(arguments, 1, to));
+                command.handle(Arrays.copyOfRange(arguments, 1, to));
             }
             ////////////////////////////////////
             // This exception means "Ok, I    //
@@ -185,32 +185,32 @@ public class Console extends Thread
         ////////////////////////////////////
         // Setting the "close" handler    //
         ////////////////////////////////////
-        Handler closeHandler = new CloseHandler();
-        this.handlers.put("exit", closeHandler);
-        this.handlers.put("close", closeHandler);
-        this.handlers.put("stop", closeHandler);
+        Command closeHandler = new CloseCommand();
+        this.commands.put("exit", closeHandler);
+        this.commands.put("close", closeHandler);
+        this.commands.put("stop", closeHandler);
 
         ////////////////////////////////////
         // Setting the "history" handler  //
         ////////////////////////////////////
-        this.handlers.put("history", new HistoryHandler(this.history));
+        this.commands.put("history", new HistoryCommand(this.history));
 
         ////////////////////////////////////
         // Setting the "gui" handler      //
         ////////////////////////////////////
-        this.handlers.put("gui", new GuiHandler());
+        this.commands.put("gui", new GuiCommand());
 
         ////////////////////////////////////
         // Setting the "connected"        //
         // handler                        //
         ////////////////////////////////////
-        this.handlers.put("connected", new ConnectedHandler());
+        this.commands.put("connected", new ConnectedCommand());
 
         ////////////////////////////////////
         // Setting the "log"              //
         // handler                        //
         ////////////////////////////////////
-        this.handlers.put("log", new LogHandler());
+        this.commands.put("log", new LogCommand());
     }
 
     /**

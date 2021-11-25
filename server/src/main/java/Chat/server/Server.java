@@ -95,6 +95,14 @@ public class Server extends Thread
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
         this.logs = new ArrayList<>();
+        try
+        {
+            this.logger = Logger.getLogger();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         server = this;
     }
 
@@ -113,13 +121,21 @@ public class Server extends Thread
         this.connected = new HashMap<>();
         this.gui = new ServerGUI();
         this.logs = new ArrayList<>();
+        try
+        {
+            this.logger = Logger.getLogger();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         server = this;
     }
 
     @Override
     public void run()
     {
-        this.console = new Console(this, this.logger);
+        this.console = new Console();
 
         ////////////////////////////////////
         // Starts the console             //
@@ -331,17 +347,6 @@ public class Server extends Thread
     public Client[] getConnectedClients()
     {
         return this.connected.values().toArray(new Client[0]);
-    }
-
-    /**
-     * The logger where the server will be
-     * write messages
-     * 
-     * @param logger
-     */
-    public void setLogger(Logger logger)
-    {
-        this.logger = logger;
     }
 
     /**

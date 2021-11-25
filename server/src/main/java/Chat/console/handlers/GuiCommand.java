@@ -5,20 +5,20 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import Chat.console.exception.CloseConsoleException;
+import Chat.server.Server;
 
 /**
  * @author Daniele Castiglia
  * @version 1.1.0
  */
-public class CloseHandler implements Handler
+public class GuiCommand implements Command
 {
     /**
      * Options of the command
      */
     final Options options = new Options();
 
-    public CloseHandler()
+    public GuiCommand()
     {
         options
             .addOption(Option.builder("h")
@@ -31,18 +31,18 @@ public class CloseHandler implements Handler
     }
 
     @Override
-    public void handle(String[] args) throws CloseConsoleException, ParseException
+    public void handle(String[] args) throws ParseException
     {
         CommandLine cmd = parser.parse(options, args);
-
+        
         if (cmd.hasOption("h"))
         {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("exit", options);
+            formatter.printHelp("gui", options);
 
             return;
         }
 
-        throw new CloseConsoleException();
+        Server.server.startGui();
     }
 }

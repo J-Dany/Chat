@@ -9,15 +9,18 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import Chat.server.Server;
+import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Class for logging messages
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class Logger extends Thread
 {
+    private static Logger logger;
+
     /**
      * Represents the queue where the LogMessages
      * are stored
@@ -53,7 +56,7 @@ public class Logger extends Thread
         WA  // WARNING
     };
 
-    public Logger(String path) throws FileNotFoundException, UnsupportedEncodingException, IOException
+    private Logger(String path) throws FileNotFoundException, UnsupportedEncodingException, IOException
     {
         super("Logger");
         this.queue = new LinkedBlockingQueue<>();
@@ -65,6 +68,25 @@ public class Logger extends Thread
 
         FileWriter w = new FileWriter(this.logFile, true);
         this.writer = new PrintWriter(w);
+
+        this.start();
+    }
+
+    public static Logger getLogger()
+    {
+        if (logger == null)
+        {
+            try
+            {
+                logger = new Logger(Dotenv.load().get("LOG_FILE_PATH"));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return logger;
     }
 
     @Override

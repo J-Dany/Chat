@@ -5,20 +5,21 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import Chat.server.Client;
 import Chat.server.Server;
 
 /**
  * @author Daniele Castiglia
  * @version 1.1.0
  */
-public class GuiHandler implements Handler
+public class ConnectedCommand implements Command 
 {
     /**
      * Options of the command
      */
     final Options options = new Options();
 
-    public GuiHandler()
+    public ConnectedCommand()
     {
         options
             .addOption(Option.builder("h")
@@ -34,15 +35,32 @@ public class GuiHandler implements Handler
     public void handle(String[] args) throws ParseException
     {
         CommandLine cmd = parser.parse(options, args);
-        
+
         if (cmd.hasOption("h"))
         {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("gui", options);
+            formatter.printHelp("connected", options);
 
             return;
         }
 
-        Server.server.startGui();
+        Client[] clients = Server.server.getConnectedClients();
+
+        if (clients.length == 1) 
+        {
+            System.out.println("There is only one client connected: ");
+            System.out.println("> " + clients[0].getUsername() + " (" + clients[0].getAddress() + ")");
+        } 
+        else if (clients.length == 0) 
+        {
+            System.out.println("There are 0 clients connected");
+        } 
+        else 
+        {
+            System.out.println("There are " + clients.length + " clients connected: ");
+            for (Client c : clients) {
+                System.out.println("> " + c.getUsername() + " (" + c.getAddress() + ")");
+            }
+        }
     }
 }

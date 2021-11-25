@@ -5,10 +5,12 @@ import Chat.server.Client;
 
 /**
  * @author Daniele Castiglia
- * @version 1.0.0
+ * @version 1.1.0
  */
 public interface Request
 {
+    public Logger logger = Logger.getLogger();
+
     /**
      * Method that handle the request
      * 
@@ -16,5 +18,5 @@ public interface Request
      * @param logger the server logger
      * @throws Exception
      */
-    public void handle(Client client, Logger logger) throws Exception;
+    public void handle(Client client) throws Exception;
 }

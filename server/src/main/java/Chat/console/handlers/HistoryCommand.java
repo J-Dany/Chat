@@ -11,7 +11,7 @@ import org.apache.commons.cli.ParseException;
  * @author Daniele Castiglia
  * @version 1.1.0
  */
-public class HistoryHandler implements Handler
+public class HistoryCommand implements Command
 {
     /**
      * Reference to the console history
@@ -23,7 +23,7 @@ public class HistoryHandler implements Handler
      */
     final Options options = new Options();
 
-    public HistoryHandler(Stack<String> history)
+    public HistoryCommand(Stack<String> history)
     {
         this.history = history;
 

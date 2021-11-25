@@ -3,13 +3,12 @@ package Chat;
 import java.sql.SQLException;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
-import io.github.cdimascio.dotenv.*;
 
 /**
  * Here is where the program starts
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class Main
 {
@@ -20,11 +19,6 @@ public class Main
         // thread to identify it          //
         ////////////////////////////////////
         Thread.currentThread().setName("Main");
-        
-        ////////////////////////////////////
-        // Load .env file                 //
-        ////////////////////////////////////
-        Dotenv dotenv = Dotenv.load();
 
         Logger logger = null;
 
@@ -34,8 +28,7 @@ public class Main
             // Create an instance of Logger   //
             // and starts the thread          //
             ////////////////////////////////////
-            logger = new Logger(dotenv.get("LOG_FILE_PATH"));
-            logger.start();
+            logger = Logger.getLogger();
 
             logger.addMsg(LogMessage.info("Establishing a connection to the database..."));
 
@@ -62,7 +55,6 @@ public class Main
             // server and starts it           //
             ////////////////////////////////////
             Server server = new Server(3678);
-            server.setLogger(logger);
             server.start();
 
             logger.addMsg(LogMessage.ok("Server started"));

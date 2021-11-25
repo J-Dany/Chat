@@ -7,7 +7,6 @@ import java.util.Base64;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import Chat.LogMessage;
-import Chat.Logger;
 import Chat.server.Client;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
@@ -28,7 +27,7 @@ public class LoginRequest implements Request
     }
 
     @Override
-    public void handle(Client client, Logger logger) throws Exception 
+    public void handle(Client client) throws Exception 
     {        
         Connection connection = DatabaseConnection.getConnection();
 

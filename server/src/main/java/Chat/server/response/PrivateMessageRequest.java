@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import Chat.LogMessage;
-import Chat.Logger;
 import Chat.server.Client;
 import Chat.server.Server;
 import Chat.server.database.DatabaseConnection;
@@ -27,7 +26,7 @@ public class PrivateMessageRequest implements Request
     }
 
     @Override
-    public void handle(Client client, Logger logger) throws Exception 
+    public void handle(Client client) throws Exception 
     {
         Connection connection = DatabaseConnection.getConnection();
 

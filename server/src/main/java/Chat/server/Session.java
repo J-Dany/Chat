@@ -82,12 +82,12 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage(), msg.getRawString());
 
-                this.logger.addMsg(LogMessage.info("Handler instantiated " + this.client.getAddress() + ": " + request.getClass().getName()));
+                this.logger.addMsg(LogMessage.info("Handler instantiated for " + this.client.getAddress() + ": " + request.getClass().getName()));
 
                 ////////////////////////////////////
                 // Handle the request             //
                 ////////////////////////////////////
-                request.handle(this.client, this.logger);
+                request.handle(this.client);
             }
             ////////////////////////////////////
             // Exception for closing the      //
@@ -103,12 +103,7 @@ public class Session implements Runnable
             // In case of bad close           //
             // connection request             //
             ////////////////////////////////////
-            catch (IllegalArgumentException e)
-            {
-                logger.addMsg(LogMessage.error(e.toString()));
-                break;
-            }
-            catch (SocketException e)
+            catch (IllegalArgumentException | SocketException e)
             {
                 logger.addMsg(LogMessage.error(e.toString()));
                 break;

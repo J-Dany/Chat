@@ -1,6 +1,5 @@
 package Chat.server.response;
 
-import Chat.Logger;
 import Chat.server.Client;
 import Chat.server.exception.CloseConnectionException;
 import Chat.LogMessage;
@@ -12,7 +11,7 @@ import Chat.LogMessage;
 public class CloseConnectionRequest implements Request
 {
     @Override
-    public void handle(Client client, Logger logger) throws Exception 
+    public void handle(Client client) throws Exception 
     {
         logger.addMsg(LogMessage.info("Disconnection request from " + client.getAddress() + " (" + client.getUsername() + ")"));
         

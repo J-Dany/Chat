@@ -10,9 +10,9 @@ import org.apache.commons.cli.ParseException;
  * Handle a console command
  * 
  * @author Daniele Castiglia
- * @version 1.1.0
+ * @version 1.2.0
  */
-public interface Handler
+public interface Command
 {
     /**
      * The parser of the command's args
