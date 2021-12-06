@@ -1,8 +1,8 @@
-package Chat.server.database;
+package Chat.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import Chat.Logger;
 import io.github.cdimascio.dotenv.*;
 
 /**
@@ -28,14 +28,21 @@ public class DatabaseConnection
      * design pattern "Singleton"
      * 
      * @return Connection
-     * @throws SQLException
      */
-    public static Connection getConnection() throws SQLException
+    public static Connection getConnection()
     {
         if (connection == null)
         {
-            DriverManager.setLoginTimeout(2);
-            connection = DriverManager.getConnection(DB_URL, Dotenv.load().get("DB_USER"), Dotenv.load().get("DB_PASSWD"));
+            try
+            {
+                DriverManager.setLoginTimeout(2);
+                connection = DriverManager.getConnection(DB_URL, Dotenv.load().get("DB_USER"), Dotenv.load().get("DB_PASSWD"));
+            }
+            catch (Exception e)
+            {
+                Logger.error(e);
+                System.err.println("Can't establish connection to database: " + e.getMessage());
+            }
         }
 
         return connection;

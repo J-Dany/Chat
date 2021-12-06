@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -91,6 +92,7 @@ public class Logger extends Thread
 
     public static void closeLogger()
     {
+        logger.interrupt();
         logger.close();
     }
 
@@ -119,6 +121,19 @@ public class Logger extends Thread
     public static void error(String msg)
     {
         logger.addMsg(LogMessage.error(msg));
+    }
+
+    /**
+     * Log a ERROR message
+     * @param exception
+     */
+    public static void error(Exception exception)
+    {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        exception.printStackTrace(pw);
+
+        logger.addMsg(LogMessage.error(sw.toString()));
     }
 
     /**

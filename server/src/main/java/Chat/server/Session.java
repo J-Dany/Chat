@@ -2,11 +2,12 @@ package Chat.server;
 
 import java.net.SocketException;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Base64;
 import Chat.Logger;
 import Chat.server.exception.CloseConnectionException;
+import Chat.server.response.LoginRequest;
 import Chat.server.response.Request;
 import Chat.server.response.RequestFactory;
 
@@ -33,11 +34,9 @@ public class Session implements Runnable
     @Override
     public void run()
     {
-        ////////////////////////////////////
-        // Handle connection              //
-        ////////////////////////////////////
         this.manageConnection();
-        
+        this.manageLogin();
+
         while (true)
         {
             try
@@ -61,11 +60,18 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 try
                 {
-                    msg = new ClientMessage(new WebSocketMessage(buffer));
+                    if (client.isWebClient())
+                    {
+                        msg = new ClientMessage(new WebSocketMessage(buffer));
+                    }
+                    else
+                    {
+                        msg = new ClientMessage(new String(buffer, 0, buffer.length, "UTF-8"));
+                    }
                 }
                 catch (Exception e)
                 {
-                    Logger.error(e.toString());
+                    Logger.error(e);
                     continue;
                 }
 
@@ -75,12 +81,19 @@ public class Session implements Runnable
                 ////////////////////////////////////
                 Request request = RequestFactory.getResponse(msg.getTypeOfMessage(), msg.getRawString());
 
+                if (request instanceof LoginRequest)
+                {
+                    throw new Exception(this.client.getUsername() + " is trying to login while is already logged in");
+                }
+
                 Logger.info("Handler instantiated for " + this.client.getAddress() + ": " + request.getClass().getName());
 
                 ////////////////////////////////////
                 // Handle the request             //
                 ////////////////////////////////////
                 request.handle(this.client);
+
+                Logger.ok("Request handled for " + this.client.getUsername());
             }
             ////////////////////////////////////
             // Exception for closing the      //
@@ -98,12 +111,12 @@ public class Session implements Runnable
             ////////////////////////////////////
             catch (IllegalArgumentException | SocketException e)
             {
-                Logger.error(e.toString());
+                Logger.error(e);
                 break;
             }
             catch (Exception e)
             {
-                Logger.error(e.toString());
+                Logger.error(e);
             }
         }
 
@@ -117,7 +130,7 @@ public class Session implements Runnable
         }
         catch (Exception e)
         {
-            Logger.error(e.toString());
+            Logger.error(e);
         }
 
         ////////////////////////////////////
@@ -138,15 +151,15 @@ public class Session implements Runnable
     {
         try
         {
-            byte[] buffer = this.client.listenForIncomingMessage();
+            byte[] buffer = client.listenForIncomingMessage();
             String msg = new String(buffer, 0, buffer.length, "UTF-8");
-
-            Logger.info("Creating the response connection");
 
             Matcher get = Pattern.compile("^GET").matcher(msg);
 
             if (get.find())
             {
+                Logger.info("Detect web socket. Creating the response connection");
+
                 Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(msg);
 
                 match.find();
@@ -158,14 +171,50 @@ public class Session implements Runnable
                     + Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8")))
                     + "\r\n\r\n").getBytes("UTF-8");
 
-                this.client.sendMessage(response);
+                client.sendMessage(response);
 
-                Logger.ok("Response created and sent to " + this.client.getAddress());
+                Logger.ok("Response created and sent to " + client.getAddress());
+
+                client.webClient();
+            }
+            else
+            {
+                Logger.info("Detect normal socket.");
             }
         }
         catch (Exception e)
         {
-            Logger.error(e.toString());
+            Logger.error(e);
+        }
+    }
+
+    /**
+     * Manage the login
+     */
+    private void manageLogin()
+    {
+        ClientMessage msg = null;
+
+        try
+        {
+            if (this.client.isWebClient())
+            {
+                byte[] buffer = this.client.listenForIncomingMessage();
+                msg = new ClientMessage(new WebSocketMessage(buffer));
+            }
+            else
+            {
+                byte[] buffer = client.getLastReceivedData();
+                msg = new ClientMessage(new String(buffer, 0, buffer.length, "UTF-8"));
+            }
+
+            Request request = RequestFactory.getResponse(msg.getTypeOfMessage(), msg.getRawString());
+
+            request.handle(this.client);
+        }
+        catch (Exception e)
+        {
+            Logger.error(e);
         }
     }
 }

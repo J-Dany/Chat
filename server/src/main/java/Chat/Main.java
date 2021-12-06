@@ -1,24 +1,24 @@
 package Chat;
 
-import java.sql.SQLException;
 import Chat.server.Server;
-import Chat.server.database.DatabaseConnection;
+import Chat.console.Console;
+import Chat.database.DatabaseConnection;
 
 /**
  * Here is where the program starts
  * 
  * @author Daniele Castiglia
- * @version 1.2.0
+ * @version 1.3.0
  */
 public class Main
 {
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         ////////////////////////////////////
         // Sets the name of the current   //
         // thread to identify it          //
         ////////////////////////////////////
-        Thread.currentThread().setName("Main");
+        Thread.currentThread().setName("That-Main");
 
         Logger.createLogger();
 
@@ -30,16 +30,7 @@ public class Main
             // Try to establish a connection  //
             // to the database                //
             ////////////////////////////////////
-            try
-            {
-                DatabaseConnection.getConnection();
-
-                Logger.ok("Connection to the database established");
-            }
-            catch (SQLException e)
-            {
-                System.out.println("Can't establish a connection to the database!");
-            }
+            DatabaseConnection.getConnection();
 
             Logger.info("Starting the server...");
 
@@ -53,13 +44,10 @@ public class Main
 
             Logger.ok("Server started");
 
-            ////////////////////////////////////
-            // Wait for the server finishing  //
-            // his work                       //
-            ////////////////////////////////////
-            server.join();
+            Console console = new Console();
+            console.start();
 
-            Logger.ok("Server closed");
+            server.join();
         }
         catch (Exception e)
         {

@@ -55,6 +55,16 @@ public class ClientMessage
     }
 
     /**
+     * Constructor for normal JSON message 
+     * (normal => data not encoded as web socket message)
+     * @param socketMessage
+     */
+    public ClientMessage(String socketMessage)
+    {
+        this.json = new JSONObject(socketMessage);
+    }
+
+    /**
      * Returns the type of message sended
      * 
      * @return TypeOfMessage

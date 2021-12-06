@@ -133,7 +133,7 @@ public class Console extends Thread
                 }
                 catch (Exception ex)
                 {
-                    Logger.error(ex.toString());
+                    Logger.error(ex);
                 }
 
                 break;
@@ -143,7 +143,7 @@ public class Console extends Thread
             ////////////////////////////////////
             catch (UnexpectedClosedConsole e)
             {
-                Logger.error(e.toString());
+                Logger.error(e);
                 break;
             }
             ////////////////////////////////////
@@ -154,7 +154,7 @@ public class Console extends Thread
             catch (CommandNotFound e)
             {
                 System.err.println("> " + e.getMessage());
-                Logger.error(e.toString());
+                Logger.error(e);
             }
             ////////////////////////////////////
             // Any other exception            //
@@ -162,7 +162,7 @@ public class Console extends Thread
             catch (Exception e)
             {
                 System.out.println("> Error: " + e.getMessage());
-                Logger.error(e.toString());
+                Logger.error(e);
             }
         }
 
@@ -211,8 +211,5 @@ public class Console extends Thread
      * by console when saving command
      * in history
      */
-    private void setIgnoredCommands()
-    {
-        this.ignoredCommand.add("useradd");
-    }
+    private void setIgnoredCommands() { }
 }

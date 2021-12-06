@@ -42,8 +42,16 @@ public class WebSocketMessage
     }
 
     /**
-     * Encode the message. This method is called
-     * when {@code getEncodedMessage()} is called
+     * Returns the message as String (encoded as JSON)
+     * @return
+     */
+    public String getMessage()
+    {
+        return new Gson().toJson(this.message).toString();
+    }
+
+    /**
+     * Encode the message
      * 
      * @throws IOException
      */

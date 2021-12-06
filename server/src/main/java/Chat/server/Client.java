@@ -1,16 +1,10 @@
 package Chat.server;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import Chat.server.database.*;
+import java.util.HashMap;
 import Chat.server.exception.FriendNotFoundException;
 import Chat.server.message.Message;
 import Chat.server.message.info.DisconnectionMessage;
@@ -22,7 +16,7 @@ import Chat.server.pojo.Friend;
  * Class that represent a Client
  * 
  * @author Daniele Castiglia
- * @version 1.4.0
+ * @version 1.5.0
  */
 public class Client
 {
@@ -44,23 +38,27 @@ public class Client
     private String username;
 
     /**
-     * A counter for ban or mute
-     * this client
-     * @see MAX_MESSAGE_BEFORE_MUTE
-     */
-    private int messageCounter;
-
-    /**
      * The socket assigned for this
      * client
      */
-    private Socket socket;
+    private ThatClientSocket socket;
 
     /**
-     * The object used to write into
-     * the socket
+     * Flag indicating if this client
+     * is a web client or not
      */
-    private OutputStream writer;
+    private boolean isWebClient = false;
+
+    /**
+     * Friends
+     */
+    private HashMap<String, Friend> friends;
+
+    /**
+     * Buffer that contains the last
+     * received data (max size: 2048)
+     */
+    private byte[] lastReceivedData;
 
     /**
      * Constructor
@@ -68,11 +66,19 @@ public class Client
      * @param s socket of the connection
      * @throws IOException
      */
-    public Client(Socket s) throws IOException
+    public Client(ThatClientSocket s) throws IOException
     {
         this.socket = s;
         this.address = s.getInetAddress();
-        this.writer = s.getOutputStream();
+    }
+
+    /**
+     * Set the client friends
+     * @param friends
+     */
+    public void setFriends(HashMap<String, Friend> friends)
+    {
+        this.friends = friends;
     }
 
     /**
@@ -81,7 +87,6 @@ public class Client
     public void setUsername(String username)
     {
         this.username = username;
-        this.messageCounter = 0;
     }
 
     /**
@@ -115,6 +120,34 @@ public class Client
     }
 
     /**
+     * Set the type of the socket
+     * as a web client socket
+     */
+    public void webClient()
+    {
+        this.isWebClient = true;
+        this.socket.setIsWebSocket(true);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean isWebClient()
+    {
+        return this.isWebClient;
+    }
+
+    /**
+     * Gets the last received data
+     * @return
+     */
+    public byte[] getLastReceivedData()
+    {
+        return this.lastReceivedData;
+    }
+
+    /**
      * This method sends the message to
      * this client
      * 
@@ -123,14 +156,7 @@ public class Client
      */
     public void sendMessage(Message msg) throws IOException
     {
-        WebSocketMessage wbm = new WebSocketMessage(msg);
-
-        String message = new String(wbm.getEncodedMessage(), "UTF-8");
-
-        Server.server.updateExitingData(message);
-
-        this.writer.write(wbm.getEncodedMessage());
-        this.writer.flush();
+        this.socket.send(msg);
     }
 
     /**
@@ -145,149 +171,105 @@ public class Client
      */
     public void sendMessage(byte[] buffer) throws IOException
     {
-        this.writer.write(buffer);
-        this.writer.flush();
+        this.socket.connectionMessage(buffer);
     }
 
     /**
      * As {@code notifyOnlineToFriend} but for
      * disconnection
      */
-    public void notifyDisconnectionToFriend() throws SQLException, IOException
+    public void notifyDisconnectionToFriend()
     {
-        Connection connection = DatabaseConnection.getConnection();
-
-        Statement stmt = connection.createStatement();
-
-        String query = "SELECT `users`.`username` as `friend` " +
-            " FROM friends " +
-            " INNER JOIN `users` " +
-            " ON `users`.`id_user` = `friends`.`user2`" +
-            " WHERE `friends`.`user1` = " + this.id + ";";
-
-        ResultSet result = stmt.executeQuery(query);
-
-        while (result.next())
-        {
-            if (Server.server.isOnline(result.getString("friend")))
+        this.friends.values().forEach(friend -> {
+            if (Server.server.isOnline(friend.getUsername()))
             {
-                Client friend = Server.server.getClient(result.getString("friend"));
+                Client f = Server.server.getClient(friend.getUsername());
 
-                friend.sendMessage(new DisconnectionMessage(this.username));
+                try
+                {
+                    f.sendMessage(new DisconnectionMessage(this.username));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
-        }
+        });
     }
 
     /**
      * Notify to friends of this client
      * that has connected to the chat
      */
-    public void notifyOnlineToFriend() throws SQLException, IOException
+    public void notifyOnlineToFriend()
     {
-        Connection connection = DatabaseConnection.getConnection();
-
-        Statement stmt = connection.createStatement();
-
-        String query = "SELECT `users`.`username` as `friend` " +
-            " FROM friends " +
-            " INNER JOIN `users` " +
-            " ON `users`.`id_user` = `friends`.`user2`" +
-            " WHERE `friends`.`user1` = " + this.id + ";";
-
-        ResultSet result = stmt.executeQuery(query);
-
-        while (result.next())
-        {
-            if (Server.server.isOnline(result.getString("friend")))
+        this.friends.values().forEach(friend -> {
+            if (Server.server.isOnline(friend.getUsername()))
             {
-                Client friend = Server.server.getClient(result.getString("friend"));
+                Client f = Server.server.getClient(friend.getUsername());
 
-                friend.sendMessage(new NewConnectionMessage(this.username));
+                try
+                {
+                    f.sendMessage(new NewConnectionMessage(this.username));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
+        });
+    }
+
+    /**
+     * Returns one friend of this client
+     * @return
+     */
+    public Friend getFriend(String friendUsername) throws FriendNotFoundException
+    {
+        if (!this.friends.containsKey(friendUsername))
+        {
+            throw new FriendNotFoundException(this.username, friendUsername);
         }
+
+        return this.friends.get(friendUsername);
     }
 
     /**
      * Send a message to a friend
      * *
-     * @param friend friend of this client
+     * @param friendUsername friend of this client
      * @param msg the message
      * @throws SQLException
      * @throws FriendNotFoundException
      * @throws IOException
      */
-    public void sendToFriend(String friend, Message msg) throws SQLException, FriendNotFoundException, IOException
+    boolean found = false;
+    public void sendToFriend(String friendUsername, Message msg) throws FriendNotFoundException, IOException
     {
-        if (!Server.server.isOnline(friend))
+        if (!Server.server.isOnline(friendUsername))
         {
             return;
         }
 
-        Connection connection = DatabaseConnection.getConnection();
-
-        Statement stmt = connection.createStatement();
-
-        String query = "SELECT COUNT(*) as num_rows FROM friends WHERE `user1` = " + this.id + " AND `user2` = " + Server.server.getClient(friend).id + ";";
-
-        ResultSet result = stmt.executeQuery(query);
-
-        if (result.next() && result.getInt("num_rows") == 1)
+        if (!this.friends.containsKey(friendUsername))
         {
-            if (Server.server.isOnline(friend))
-            {
-                Client f = Server.server.getClient(friend);
-
-                f.sendMessage(msg);
-            }
-
-            return;
+            throw new FriendNotFoundException(this.username, friendUsername);
         }
 
-        throw new FriendNotFoundException(this.username, friend);
+        if (Server.server.isOnline(friendUsername))
+        {
+            Client f = Server.server.getClient(friendUsername);
+
+            f.sendMessage(msg);
+        }
     }
 
     /**
      * Send the list of friend
      */
-    public void sendListOfFriend() throws SQLException, IOException
+    public void sendListOfFriend() throws IOException
     {
-        ArrayList<Friend> friends = new ArrayList<>();
-
-        Connection connection = DatabaseConnection.getConnection();
-
-        Statement stmt = connection.createStatement();
-        Statement stmt1 = connection.createStatement();
-
-        String query = "SELECT users.id_user as friend_id, users.username as friend, users.photo as photo FROM friends" +
-        " INNER JOIN users ON friends.user2 = users.id_user " +
-        " WHERE `user1` = " + this.id + ";";
-
-        ResultSet result = stmt.executeQuery(query);
-
-        while (result.next())
-        {
-            String query1 = "SELECT * FROM messages WHERE sender = " + this.id + " AND addresse = " + result.getInt("friend_id") + 
-            " OR sender = " + result.getInt("friend_id") + " AND addresse = " + this.id + 
-            " ORDER BY data DESC LIMIT 1;";
-
-            ResultSet result1 = stmt1.executeQuery(query1);
-
-            Friend f = new Friend();
-            f.setName(result.getString("friend"));
-            f.setIdFriend(result.getInt("friend_id"));
-            f.setOnline(Server.server.isOnline(result.getString("friend")));
-            f.setPhoto(result.getString("photo"));
-
-            if (result1.next())
-            {
-                f.setLastMessage(result1.getString("message"));
-                f.setContent(result1.getString("content_type"));
-                f.setLanguage(result1.getString("language"));
-            }
-
-            friends.add(f);
-        }
-
+        ArrayList<Friend> friends = new ArrayList<Friend>(this.friends.values());
         this.sendMessage(new ListOfFriendMessage(friends));
     }
 
@@ -299,30 +281,11 @@ public class Client
      */
     public byte[] listenForIncomingMessage() throws Exception
     {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[2048];
         int l = this.socket.getInputStream().read(buffer);
         
-        return Arrays.copyOfRange(buffer, 0, l);
-    }
-
-    /**
-     * Invoked every time this client
-     * sent a message
-     */
-    public void newMessageSent()
-    {
-        ++this.messageCounter;
-    }
-
-    /**
-     * Used to retrieve the message counter
-     * of this client. The server will use this
-     * method to determine if can send, or mute or 
-     * ban this client
-     */
-    public int getMessageCounter()
-    {
-        return this.messageCounter;
+        this.lastReceivedData = Arrays.copyOfRange(buffer, 0, l);
+        return this.lastReceivedData;
     }
 
     /**

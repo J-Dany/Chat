@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import Chat.LogMessage;
 import Chat.Logger;
-import Chat.console.Console;
 import Chat.gui.ServerGUI;
 import Chat.server.exception.ClientAlreadyConnectedException;
 import Chat.server.message.info.ClosingServerMessage;
@@ -65,11 +64,6 @@ public class Server extends Thread
     private ServerSocket socket;
 
     /**
-     * Server console
-     */
-    private Console console;
-
-    /**
      * This thread pool will handle
      * all connection
      */
@@ -113,13 +107,6 @@ public class Server extends Thread
     @Override
     public void run()
     {
-        this.console = new Console();
-
-        ////////////////////////////////////
-        // Starts the console             //
-        ////////////////////////////////////
-        this.console.start();
-
         ////////////////////////////////////
         // While this thread is not       //
         // interrupted...                 //
@@ -135,6 +122,8 @@ public class Server extends Thread
                 ////////////////////////////////////
                 Socket s = this.socket.accept();
 
+                ThatClientSocket clientSocket = new ThatClientSocket(s);
+
                 if (this.connected.size() >= THREAD_POOL_SIZE)
                 {
                     Logger.ok("Connection refused for " + s.getInetAddress() + "(reached the maximum connection)");
@@ -143,13 +132,17 @@ public class Server extends Thread
                     continue;
                 }
 
+                clientSocket.onSending((senderUsername, message) -> {
+                    updateExitingData(senderUsername, message);
+                });
+
                 Logger.ok("Connection accepted for " + s.getInetAddress());
 
-                this.threadPool.submit(new Session(new Client(s)));
+                this.threadPool.submit(new Session(new Client(clientSocket)));
             }
             catch (Exception e)
             {
-                Logger.error(e.getMessage());
+                Logger.error(e);
             }
         }
     }
@@ -230,7 +223,7 @@ public class Server extends Thread
         }
         catch (IndexOutOfBoundsException e)
         {
-            Logger.error(e.toString());
+            Logger.error(e);
         }
 
         return null;
@@ -242,11 +235,11 @@ public class Server extends Thread
      * 
      * @param data the data
      */
-    public void updateExitingData(String data)
+    public void updateExitingData(String senderUsername, String data)
     {
         if (gui.isOn())
         {
-            gui.updateExitingData(data);
+            gui.updateExitingData(senderUsername, data);
         }
     }
 
@@ -264,7 +257,7 @@ public class Server extends Thread
         catch (Exception e)
         {
             e.printStackTrace();
-            Logger.error(e.toString());
+            Logger.error(e);
         }
     }
 
@@ -276,8 +269,10 @@ public class Server extends Thread
      * @param client the reference to the client created when he connected
      * @throws ClientAlreadyConnectedException
      */
-    public void addNewConnectedClient(String username, Client client) throws ClientAlreadyConnectedException
+    public void addNewConnectedClient(Client client) throws ClientAlreadyConnectedException
     {
+        String username = client.getUsername();
+
         if (this.connected.containsKey(username))
         {
             throw new ClientAlreadyConnectedException(username, this.connected.get(username).getAddress().toString());
@@ -337,8 +332,5 @@ public class Server extends Thread
         this.socket.close();
         
         this.interrupt();
-        
-        this.console.interrupt();
-        this.console.join(500);
     }
 }

@@ -10,15 +10,27 @@ package Chat.server.pojo;
  */
 public class Friend
 {
+    private String Username;
     private String Name;
+    private String Surname;
     private String Photo;
     private String LastMessage;
     private String Content;
     private String Language;
-    private int IdFriend;
+    private int Id;
     private boolean Online;
 
     public Friend() { }
+
+    public String getUsername()
+    {
+        return this.Username;
+    }
+
+    public void setUsername(String Username)
+    {
+        this.Username = Username;
+    }
 
     public String getName() 
     {
@@ -28,6 +40,16 @@ public class Friend
     public void setName(String Name) 
     {
         this.Name = Name;
+    }
+
+    public String getSurname()
+    {
+        return this.Surname;
+    }
+
+    public void setSurname(String Surname)
+    {
+        this.Surname = Surname;
     }
 
     public String getPhoto() 
@@ -68,14 +90,14 @@ public class Friend
         this.Language = Language;
     }
 
-    public int getIdFriend() 
+    public int getId() 
     {
-        return this.IdFriend;
+        return this.Id;
     }
 
-    public void setIdFriend(int IdFriend) 
+    public void setIdFriend(int Id) 
     {
-        this.IdFriend = IdFriend;
+        this.Id = Id;
     }
 
     public boolean isOnline() 

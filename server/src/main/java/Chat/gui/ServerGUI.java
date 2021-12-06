@@ -51,6 +51,7 @@ public class ServerGUI extends Application
         primaryStage.setScene(scene);
 
         on = true;
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -90,9 +91,9 @@ public class ServerGUI extends Application
      * 
      * @param data the data
      */
-    public void updateExitingData(String data)
+    public void updateExitingData(String senderUsername, String data)
     {
-        Platform.runLater(() -> controller.updateExitingData(data));
+        Platform.runLater(() -> controller.updateExitingData(senderUsername, data));
     }
 
     /**

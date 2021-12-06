@@ -1,6 +1,7 @@
 package Chat.gui;
 
 import java.util.HashMap;
+import Chat.Logger;
 import Chat.server.Server;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -8,11 +9,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -67,6 +65,7 @@ public class GuiController
         }
         catch (Exception e)
         {
+            Logger.error(e);
             e.printStackTrace();
         }
     }
@@ -92,6 +91,7 @@ public class GuiController
         }
         catch (Exception e)
         {
+            Logger.error(e);
             e.printStackTrace();
         }
     }
@@ -119,7 +119,7 @@ public class GuiController
         }
     }
 
-    public void updateExitingData(String data)
+    public void updateExitingData(String senderUsername, String data)
     {
         Label l = new Label(data);
         l.setTextFill(Color.WHITE);
@@ -128,9 +128,31 @@ public class GuiController
             @Override
             public void handle(MouseEvent e)
             {
-                Alert alert = new Alert(AlertType.NONE, l.getText(), ButtonType.OK);
+                try
+                {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/exitingDataViewer.fxml"));
+                    Parent root = loader.load();
 
-                alert.showAndWait();
+                    ((ExitingDataController)loader.getController()).loadData(data);
+
+                    Scene scene = new Scene(root);
+
+                    Stage stage = new Stage();
+
+                    stage.setTitle("Data");
+                    stage.setScene(scene);
+                    stage.setResizable(false);
+
+                    stage.setTitle(senderUsername);
+                    stage.initOwner(ServerGUI.getPrimaryStage());
+                    stage.initModality(Modality.APPLICATION_MODAL);
+                    stage.showAndWait();
+                }
+                catch (Exception ex)
+                {
+                    Logger.error(ex);
+                    ex.printStackTrace();
+                }
             }
         });
 
